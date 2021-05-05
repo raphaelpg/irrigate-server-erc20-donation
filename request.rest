@@ -1,0 +1,67 @@
+GET http://localhost:8080/api/associations
+
+###
+
+POST http://localhost:8080/api/user/add
+Content-Type: application/json
+
+{
+  "email": "limited@test.com",
+  "password": "test1"
+}
+
+###
+
+GET http://localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "email": "limited@test.com"
+}
+
+###
+
+POST http://localhost:8080/api/user/login
+Content-Type: application/json
+
+{
+  "email": "limited@test.com",
+  "password": "test1"
+}
+
+###
+
+DELETE http://localhost:8080/api/user/delete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpbWl0ZWRAdGVzdC5jb20iLCJpYXQiOjE2MTgzMjE2MjksImV4cCI6MTYxODMyMjIyOX0.oZL2jyNuABBapURltHqO4xD5C2AdTPiVwIL2yUrtw2M
+
+{
+  "email": "limited@test.com"
+}
+
+###
+
+GET http://localhost:8080/api/user/validate 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE2MTcxMjM4MzksImV4cCI6MTYxNzEyNDQzOX0.N24HVwhF8AC7jgxqXoQbUuWW5foKcpyJbEwdXiHH7uQ
+
+
+###
+
+POST http://localhost:8080/api/message/add
+Content-Type: application/json
+
+{
+  "name": "mockName",
+  "email": "mock@mock.com",
+  "message": "mock message"
+}
+
+
+###
+
+PATCH http://localhost:8080//api/user/updateSubscriptions
+Content-Type: application/json
+
+{
+  "email": "limited@test.com",
+  "subscribedAssociations": "mockAssociationId"
+}
