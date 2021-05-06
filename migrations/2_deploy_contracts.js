@@ -1,7 +1,8 @@
-const Dai = artifacts.require("Dai");
-const Irrigate = artifacts.require("Irrigate");
+const Dai = artifacts.require("./Dai.sol");
+const Irrigate = artifacts.require("./Irrigate.sol");
 
-module.exports = function (deployer) {
-  deployer.deploy(Dai, 5777);
-  deployer.deploy(Irrigate);
+module.exports = (deployer, network) => {
+  deployer.deploy(Dai, 1337).then(function() {
+    return deployer.deploy(Irrigate, Dai.address)
+  });
 };
