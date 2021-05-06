@@ -30,7 +30,7 @@ contract("Irrigate", (accounts) => {
       assert.equal(owner, newOwner, "The owner should be equal to newOwner");
     });
     
-    it("should reverts when sender is not authorized", async () => {
+    it("should reverts transferOwnership when sender is not authorized", async () => {
       await expectRevert(irrigate.transferOwnership(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
     });
   });
@@ -94,11 +94,11 @@ contract("Irrigate", (accounts) => {
       assert.equal(newOwnerBalance, 30, "The balance of newOwner should be equal to 30 Dai");
     });
     
-    it("should reverts when sender is not authorized", async () => {
+    it("should reverts transferToken when sender is not authorized", async () => {
       await expectRevert(irrigate.transferToken(originalOwner, 20, { from: originalOwner }), "Ownable: caller is not the owner");
     });
 
-    it("should reverts when balance is too low", async () => {
+    it("should reverts transferToken when balance is too low", async () => {
       await expectRevert(irrigate.transferToken(association, 200, { from: newOwner }), "Insufficient balance");
     });
   });
@@ -112,7 +112,7 @@ contract("Irrigate", (accounts) => {
       assert.equal(tokenAddress, newAddress, "The token address should be equal to the newAddress");
     });
 
-    it("should reverts when sender is not authorized", async () => {
+    it("should reverts setTokenAddress when sender is not authorized", async () => {
       await expectRevert(irrigate.setTokenAddress(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
     });
   });
