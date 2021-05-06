@@ -9,6 +9,7 @@ contract Irrigate is Ownable, ReentrancyGuard {
   address public tokenAddress;
 
   event ReceivedEther(address sender, uint amount);
+  event EtherSent(address dest, uint amount);
   event TokenAddressChanged(address previousToken, address newToken);
   event TokenTransfer(address dest, uint amount);
   
@@ -24,6 +25,12 @@ contract Irrigate is Ownable, ReentrancyGuard {
     revert();
   }
 
+  function transferEth(address payable dest, uint amountInWei) public onlyOwner nonReentrant {
+    require(address(this).balance > 0, "Insufficient balance");
+    dest.transfer(amountInWei);
+    emit EtherSent(dest, amountInWei);
+  }
+
   function setTokenAddress(address newTokenAddress) public onlyOwner {
     address previousTokenAddress = tokenAddress;
     tokenAddress = newTokenAddress;
@@ -32,7 +39,7 @@ contract Irrigate is Ownable, ReentrancyGuard {
 
   function transferToken(address dest, uint amount) public onlyOwner nonReentrant {
     Dai tokenContract = Dai(tokenAddress);
-    require(tokenContract.balanceOf(address(this)) >= amount, "Unsufficient balance");
+    require(tokenContract.balanceOf(address(this)) >= amount, "Insufficient balance");
     require(tokenContract.transferFrom(address(this), dest, amount) == true, "Could not send tokens to the buyer");
     emit TokenTransfer(dest, amount);
   }

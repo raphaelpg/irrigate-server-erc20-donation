@@ -24,7 +24,7 @@ contract("Irrigate", (accounts) => {
 
   describe("transfer ownership", async () => {
     it("can transfer the ownership of the contract", async () => {
-      await irrigate.transferOwnership(newOwner, { from: originalOwner});
+      await irrigate.transferOwnership(newOwner, { from: originalOwner });
    
       const owner = await irrigate.owner();
       assert.equal(owner, newOwner, "The owner should be equal to newOwner");
@@ -34,6 +34,36 @@ contract("Irrigate", (accounts) => {
       await expectRevert(irrigate.transferOwnership(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
     });
   });
+
+  describe("can receive and transfer Eth", async () => {
+    it('irrigate contract balance should starts with 0 ETH', async () => {
+      let balance = await web3.eth.getBalance(irrigate.address);
+      assert.equal(balance, 0, "The balance of irrigate contract should be equal to 0 Eth");
+    });
+    
+    it("can receive Eth", async () => {
+      let five_eth = web3.utils.toWei("5", "ether");
+      await web3.eth.sendTransaction({ from: donor, to: irrigate.address, value: five_eth});
+
+      let balance_wei = await web3.eth.getBalance(irrigate.address);
+      let balance_ether = web3.utils.fromWei(balance_wei, "ether");
+      assert.equal(balance_ether, 5, "The balance of irrigate contract should be equal to 5 Eth");
+    });
+
+    it("can send Eth", async () => {
+      let amountInWei = web3.utils.toWei("3", "ether");
+      await irrigate.transferEth(newOwner, amountInWei, { from: newOwner });
+
+      let balance_wei = await web3.eth.getBalance(irrigate.address);
+      let balance_ether = web3.utils.fromWei(balance_wei, "ether");
+      assert.equal(balance_ether, 2, "The balance of irrigate contract should be equal to 2 Eth");
+    });
+
+    it("should reverts transferEth when sender is not authorized", async () => {
+      let amountInWei = web3.utils.toWei("3", "ether");
+      await expectRevert(irrigate.transferEth(originalOwner, amountInWei, { from: originalOwner }), "Ownable: caller is not the owner");
+    });
+  })
 
   describe("mint and transfer Dai", async () => {
     it("can mint Dai", async () => {
@@ -69,7 +99,7 @@ contract("Irrigate", (accounts) => {
     });
 
     it("should reverts when balance is too low", async () => {
-      await expectRevert(irrigate.transferToken(association, 200, { from: newOwner }), "Unsufficient balance");
+      await expectRevert(irrigate.transferToken(association, 200, { from: newOwner }), "Insufficient balance");
     });
   });
 
@@ -85,5 +115,5 @@ contract("Irrigate", (accounts) => {
     it("should reverts when sender is not authorized", async () => {
       await expectRevert(irrigate.setTokenAddress(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
     });
-  })
+  });
 });
