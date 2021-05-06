@@ -2,9 +2,10 @@
 pragma solidity ^0.8.4;
 
 import "./Ownable.sol";
+import "./ReentrancyGuard.sol";
 import "./Dai.sol";
 
-contract Irrigate is Ownable {
+contract Irrigate is Ownable, ReentrancyGuard {
   address public tokenAddress;
 
   event ReceivedEther(address sender, uint amount);
@@ -29,8 +30,9 @@ contract Irrigate is Ownable {
     emit TokenAddressChanged(previousTokenAddress, tokenAddress);
   }
 
-  function transferToken(address dest, uint amount) public onlyOwner {
+  function transferToken(address dest, uint amount) public onlyOwner nonReentrant {
     Dai tokenContract = Dai(tokenAddress);
+    require(tokenContract.balanceOf(address(this)) >= amount, "Unsufficient balance");
     require(tokenContract.transferFrom(address(this), dest, amount) == true, "Could not send tokens to the buyer");
     emit TokenTransfer(dest, amount);
   }

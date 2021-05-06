@@ -64,5 +64,9 @@ contract("Irrigate", (accounts) => {
     it("it should reverts when sender is not authorized", async () => {
       await expectRevert(irrigate.transferToken(accounts[0], 20, { from: accounts[0] }), "Ownable: caller is not the owner");
     });
+
+    it("it should reverts when balance is too low", async () => {
+      await expectRevert(irrigate.transferToken(accounts[3], 200, { from: accounts[1] }), "Unsufficient balance");
+    });
   });
 });
