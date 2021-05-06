@@ -30,7 +30,7 @@ contract("Irrigate", (accounts) => {
       assert.equal(owner, newOwner, "The owner should be equal to newOwner");
     });
     
-    it("it should reverts when sender is not authorized", async () => {
+    it("should reverts when sender is not authorized", async () => {
       await expectRevert(irrigate.transferOwnership(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
     });
   });
@@ -39,8 +39,8 @@ contract("Irrigate", (accounts) => {
     it("can mint Dai", async () => {
       await dai.mint(donor, 100, { from: originalOwner});
       
-      const account1balance = await dai.balanceOf(donor);
-      assert.equal(account1balance, 100, "The balance of newOwner should be equal to 100 Dai");
+      const donorBalance = await dai.balanceOf(donor);
+      assert.equal(donorBalance, 100, "The balance of the donor should be equal to 100 Dai");
     });
 
     it("can transfer Dai to Irrigate contract", async () => {
@@ -53,16 +53,37 @@ contract("Irrigate", (accounts) => {
     it("can transfer Dai from Irrigate contract to another address", async () => {
       await irrigate.transferToken(association, 20, { from: newOwner });
       
-      const accounts3Balance = await dai.balanceOf(association);
-      assert.equal(accounts3Balance, 20, "The balance of association should be equal to 20 Dai");
+      const associationBalance = await dai.balanceOf(association);
+      assert.equal(associationBalance, 20, "The balance of association should be equal to 20 Dai");
+    });
+
+    it("can transfer Dai from Irrigate contract to the owner", async () => {
+      await irrigate.transferToken(newOwner, 30, { from: newOwner });
+      
+      const newOwnerBalance = await dai.balanceOf(newOwner);
+      assert.equal(newOwnerBalance, 30, "The balance of newOwner should be equal to 30 Dai");
     });
     
-    it("it should reverts when sender is not authorized", async () => {
+    it("should reverts when sender is not authorized", async () => {
       await expectRevert(irrigate.transferToken(originalOwner, 20, { from: originalOwner }), "Ownable: caller is not the owner");
     });
 
-    it("it should reverts when balance is too low", async () => {
+    it("should reverts when balance is too low", async () => {
       await expectRevert(irrigate.transferToken(association, 200, { from: newOwner }), "Unsufficient balance");
     });
   });
+
+  describe("change token address", async () => {
+    it("can change the token address", async () => {
+      let newAddress = "0x0000000000000000000000000000000000000000";
+      await irrigate.setTokenAddress(newAddress, { from: newOwner });
+
+      const tokenAddress = await irrigate.tokenAddress.call();
+      assert.equal(tokenAddress, newAddress, "The token address should be equal to the newAddress");
+    });
+
+    it("should reverts when sender is not authorized", async () => {
+      await expectRevert(irrigate.setTokenAddress(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
+    });
+  })
 });
