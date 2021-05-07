@@ -63,9 +63,9 @@ contract("Irrigate", (accounts) => {
       let amountInWei = web3.utils.toWei("3", "ether");
       await expectRevert(irrigate.transferEth(originalOwner, amountInWei, { from: originalOwner }), "Ownable: caller is not the owner");
     });
-  })
+  });
 
-  describe("mint and transfer Dai", async () => {
+  describe("can receive and transfer ERC20", async () => {
     it("can mint Dai", async () => {
       await dai.mint(donor, 100, { from: originalOwner});
       
@@ -102,16 +102,73 @@ contract("Irrigate", (accounts) => {
       await expectRevert(irrigate.transferToken(association, 200, { from: newOwner }), "Insufficient balance");
     });
   });
+  
+  describe("pause contract", async () => {
+    it("can get contract paused status", async () => {
+      let status = await irrigate.paused();
+      assert.equal(status, false, "The initial paused status should be set to false");
+    });
+    
+    it("can pause contract", async () => {
+      await irrigate.lockContract({ from: newOwner });
+      
+      let status = await irrigate.paused();
+      assert.equal(status, true, "The initial paused status should be set to true");
+    });
+
+    it("should reverts lockContract when paused already", async () => {
+      await expectRevert(irrigate.lockContract({ from: newOwner }), "Pausable: paused");
+    });
+    
+    it("should reverts lockContract when sender is not authorized", async () => {
+      await expectRevert(irrigate.lockContract({ from: originalOwner }), "Ownable: caller is not the owner");
+    });
+
+    it("should reverts receive Eth when contract is paused", async () => {
+      let one_eth = web3.utils.toWei("1", "ether");
+      await expectRevert(web3.eth.sendTransaction({ from: donor, to: irrigate.address, value: one_eth}), "Pausable: paused");
+    });
+    
+    it("should reverts transferEth when contract is paused", async () => {
+      let amountInWei = web3.utils.toWei("1", "ether");
+      await expectRevert(irrigate.transferEth(newOwner, amountInWei, { from: newOwner }), "Pausable: paused");
+    });
+    
+    it("should reverts transferToken when contract is paused", async () => {
+      await expectRevert(irrigate.transferToken(association, 1, { from: newOwner }), "Pausable: paused");
+    });
+    
+    it("can unpause contract", async () => {
+      await irrigate.unlockContract({ from: newOwner });
+      
+      let status = await irrigate.paused();
+      assert.equal(status, false, "The initial paused status should be set to false");
+    });
+
+    it("should reverts unlockContract when already unpaused", async () => {
+      await expectRevert(irrigate.unlockContract({ from: newOwner }), "Pausable: not paused");
+    });
+    
+    it("should reverts unlockContract when sender is not authorized", async () => {
+      await expectRevert(irrigate.unlockContract({ from: originalOwner }), "Ownable: caller is not the owner");
+    });
+  });
 
   describe("change token address", async () => {
+    it("should reverts setTokenAddress when contract is not paused", async () => {
+      await expectRevert(irrigate.setTokenAddress(newOwner, { from: newOwner }), "Pausable: not paused");
+    });
+
     it("can change the token address", async () => {
+      await irrigate.lockContract({ from: newOwner });
+
       let newAddress = "0x0000000000000000000000000000000000000000";
       await irrigate.setTokenAddress(newAddress, { from: newOwner });
-
+  
       const tokenAddress = await irrigate.tokenAddress.call();
       assert.equal(tokenAddress, newAddress, "The token address should be equal to the newAddress");
     });
-
+  
     it("should reverts setTokenAddress when sender is not authorized", async () => {
       await expectRevert(irrigate.setTokenAddress(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
     });
