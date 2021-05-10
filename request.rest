@@ -65,3 +65,15 @@ Content-Type: application/json
   "email": "limited@test.com",
   "subscribedAssociations": "mockAssociationId"
 }
+
+###
+
+POST http://localhost:8080/api/donation/add
+Content-Type: application/json
+
+{
+  "associationName": "Red Cross", 
+  "associationAddress": "0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf", 
+  "amount": "20", 
+  "donorAddress": "0xa7b2a787222cc8395860217A17CEb34019866d5e"
+}

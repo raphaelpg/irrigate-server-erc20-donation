@@ -11,6 +11,7 @@ const MONGO = {
   associationsCollection: process.env.MONGO_TEMPORARY_ASSOCIATIONS_COLLECTION!,
   contactMessagesCollection: process.env.MONGO_CONTACT_MESSAGES_COLLECTION!,
   usersCollection: process.env.MONGO_USERS_COLLECTION!,
+  txCollection: process.env.MONGO_DONATIONS_COLLECTION!,
 }
 
 const JWT = {
