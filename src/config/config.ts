@@ -19,10 +19,18 @@ const JWT = {
   expirationTimeInSeconds: 600,
 }
 
+const WEB3 = {
+  provider: "wss://ropsten.infura.io/ws/v3/" + process.env.INFURA_PROJECT_ID,
+  localProvider: "ws://localhost:7545",
+  irrigate: "0x3FcE4F34D922Ec3f8cC125B315a489436B8300c6",
+  dai: "0x621b97Ee4CD105619D5445941F2d63D1aD1d45F3",
+}
+
 const config = {
   server: SERVER,
   mongo: MONGO,
   jwt: JWT,
+  web3: WEB3,
 }
 
 export default config;

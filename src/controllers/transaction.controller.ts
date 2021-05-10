@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import transactionService from '../services/transacation.services';
+import transactionService from '../services/transaction.services';
 
 const getTxs = async (req: Request, res: Response) => {
 	try {
