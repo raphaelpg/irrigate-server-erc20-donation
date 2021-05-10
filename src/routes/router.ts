@@ -19,9 +19,8 @@ router.post('/api/user/login', rateLimiterSpam10, checkRequestFields(""), userCo
 router.patch('/api/user/updateSubscriptions', rateLimiterSpam10, checkAuth, userController.updateUserAssociations);
 router.delete('/api/user/delete', checkAuth, rateLimiterSpam10, checkRequestFields(""), userController.deleteUser);
 router.post('/api/message/add', rateLimiterSpam10, checkRequestFields(""), messageController.sendMessage);
-// router.get('/api/associations', rateLimiterSpam40, transactionController.getTxs);
 router.post('/api/donation/add', rateLimiterSpam10, checkRequestFields("associationName", "associationAddress", "amount", "donorAddress"), transactionController.addTx);
-// router.delete('/api/association/delete', rateLimiterSpam10, checkRequestFields("name"), transactionController.deleteTx);
-// router.patch('/api/association/update', rateLimiterSpam10, checkRequestFields(""), transactionController.updateTx);
+router.post('/api/donation/give', rateLimiterSpam10, checkRequestFields("associationName", "associationAddress", "amount", "donorAddress"), transactionController.give);
+router.patch('/api/donation/update', rateLimiterSpam10, checkRequestFields(""), transactionController.updateTx);
 
 export = router;
