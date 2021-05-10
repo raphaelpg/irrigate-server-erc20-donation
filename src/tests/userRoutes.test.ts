@@ -149,7 +149,7 @@ describe("test user routes", () => {
       .send(mockUserTemplates.mockWrongPasswordUser)
       .expect(400)
       .then(response => {
-        expect(response.body.msg).toEqual("Unauthorized");
+        expect(response.body.msg).toEqual("Error when trying to login");
         done();
       })
       .catch(err => done(err));
