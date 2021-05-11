@@ -7,5 +7,8 @@ export default interface ITx {
   donorName?: string,
   donorEmail?: string,
   donorAddress: string,
-  status: string,
+  fundsStatus: string,
+  transferStatus: string,
+  fee: string,
+  currency: string
 };

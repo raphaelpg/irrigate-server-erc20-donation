@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "start": "nodemon ./build/src/server.js"
+    "start": "nodemon ./build/src/server.js",
+    "deployLocal": "node ./build/src/deployLocal.js",
+    "deployTestnet": "node ./build/src/deployTestnet.js"
   },
   "repository": {
     "type": "git",

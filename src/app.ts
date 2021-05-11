@@ -17,11 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(router);
 
-const deployContractsLocally = async () => {
-  const dai = await web3Functions.deployDaiContract();
-  const irrigate = await web3Functions.deployIrrigateContract(dai._address);
-}
-
-deployContractsLocally();
+web3Functions.subscribeDaiTransfer();
 
 export default app;

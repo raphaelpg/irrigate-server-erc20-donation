@@ -15,7 +15,9 @@ const serviceGetTx = async () => {
 
 const serviceAddTx = async (query: ITx, status: string) => {
   try {
-    query.status = status;
+    query.fundsStatus = status;
+    query.transferStatus = "pending";
+    query.fee = (parseInt(query.amount) * 0.01).toString();
     await dbAccessFunctions.insert(txCollection, { ...query });
     return;
   } catch (e) {
@@ -53,7 +55,7 @@ const serviceProcessDonation = async (query: ITx) => {
     (
       setTimeout(async () => {
         const filter = { donorAddress: query.donorAddress, amount: query.amount };
-        query.status = "executed";
+        query.fundsStatus = "received";
         await serviceUpdateTx(filter, query);
         return
       }, 5000)
