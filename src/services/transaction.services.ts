@@ -13,11 +13,20 @@ const serviceGetTx = async () => {
   };
 };
 
+const serviceGetTxByAddressAmount = async (donorAddress: string) => {
+  try {
+    const Txs = await dbAccessFunctions.find(txCollection, { donorAddress });
+    return Txs;
+  } catch (e) {
+    throw Error("Error retrieving transactions from database");
+  };
+};
+
 const serviceAddTx = async (query: ITx, status: string) => {
   try {
     query.fundsStatus = status;
     query.transferStatus = "pending";
-    query.fee = (parseInt(query.amount) * 0.01).toString();
+    query.fee = (parseInt(query.amount) / 100).toString();
     await dbAccessFunctions.insert(txCollection, { ...query });
     return;
   } catch (e) {
@@ -67,6 +76,7 @@ const serviceProcessDonation = async (query: ITx) => {
 
 export default {
   serviceGetTx,
+  serviceGetTxByAddressAmount,
   serviceAddTx,
   serviceDeleteTx,
   serviceUpdateTx,

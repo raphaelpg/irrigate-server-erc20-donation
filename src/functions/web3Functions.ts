@@ -6,6 +6,7 @@ import irrigateInterface from '../contracts/Irrigate.json';
 //setup web3
 const web3 = new Web3(config.web3.localProvider);
 
+//set gas price
 const returnGasPrice = async () => {
   let GasPrice = parseInt(await web3.eth.getGasPrice());
   GasPrice = GasPrice + parseInt(web3.utils.toHex(web3.utils.toWei("0.1111", "gwei")));
@@ -43,6 +44,24 @@ const deployIrrigateContract = async (tokenAddress: string) => {
   return irrigate;
 };
 
+const transferDai = async (dst: string, amount: string) => {
+  const daiAddress = config.web3.dai;
+  const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
+  let result: boolean = false;
+  await daiInstance.methods.transfer(dst, amount)
+  .send({ from: config.web3.owner })
+  .on('receipt', (receipt: any) => {
+    console.log("receipt:", receipt)
+    console.log("receipt.gasUsed:", receipt.gasUsed);
+    result = true;
+  })
+  .on('error', (error: any) => {
+    console.log(error);
+    result = false;
+  });
+  return result;
+}
+
 //subscribe to dai transfer event
 const subscribeDaiTransfer = async () => {
   const daiAddress = config.web3.dai;
@@ -60,6 +79,7 @@ const subscribeDaiTransfer = async () => {
     console.log("From:", event.returnValues.src);
     console.log("To:", event.returnValues.dst);
     console.log("Amount:", event.returnValues.wad);
+    
   })
   .on('error', (error: any) => {
     console.log(error);
@@ -69,5 +89,6 @@ const subscribeDaiTransfer = async () => {
 export default {
   deployDaiContract,
   deployIrrigateContract,
+  transferDai,
   subscribeDaiTransfer
 }

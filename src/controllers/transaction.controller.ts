@@ -10,6 +10,16 @@ const getTxs = async (req: Request, res: Response) => {
 	};
 };
 
+const findTxs = async (req: Request, res: Response) => {
+	let query = req.body;
+	try {
+		const txs = await transactionService.serviceGetTxByAddressAmount(query.donorAddress);
+		return res.status(200).json({ status: 200, data: txs, msg: "Txs retrieved successfully" });
+	} catch (e) {
+		return res.status(400).json({ status: 400, msg: e.message });
+	};
+};
+
 const addTx = async (req: Request, res: Response) => {
 	let query = req.body;
 	try {
@@ -53,6 +63,7 @@ const give = async (req: Request, res: Response) => {
 
 export default {
 	getTxs,
+	findTxs,
 	addTx,
 	deleteTx,
 	updateTx,

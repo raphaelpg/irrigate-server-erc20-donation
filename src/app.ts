@@ -6,6 +6,7 @@ import 'dotenv/config';
 import router from './routes/router';
 import rateLimiterDDos from './middlewares/ddosLimiter';
 import web3Functions from './functions/web3Functions';
+import txProcessing from './txProcessing';
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(router);
 
-web3Functions.subscribeDaiTransfer();
+// web3Functions.subscribeDaiTransfer();
+txProcessing.checkPendingTx();
 
 export default app;
