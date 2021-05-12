@@ -2,6 +2,25 @@ GET http://localhost:8080/api/associations
 
 ###
 
+POST http://localhost:8080/api/association/add
+Content-Type: application/json
+
+{
+  "name":"Mock association",
+  "description":"Mock description",
+  "link":"https://www.mockwebsite.org/",
+  "category":"Health",
+  "continent":"Worldwide",
+  "country":"Worldwide",
+  "address":"0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf",
+  "logo":"",
+  "contactName": "Mock contact",
+  "contactEmail": "mockEmail@mock.com"
+},
+
+###
+
+
 POST http://localhost:8080/api/user/add
 Content-Type: application/json
 

@@ -136,7 +136,11 @@ describe("test associations routes", () => {
           .get("/api/associations")
           .expect(200)
           .then(response => {
-            expect(response.body.data[response.body.data.length -1].name).not.toEqual(mockAssociationTemplates.mockAssociation.name);
+            if (response.body.data.length > 0) {
+              expect(response.body.data[response.body.data.length -1].name).not.toEqual(mockAssociationTemplates.mockAssociation.name);
+            } else {
+              expect(response.body.data.length).toEqual(0);
+            }
             done();
           })
       })
