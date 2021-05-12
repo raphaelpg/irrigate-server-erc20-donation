@@ -15,11 +15,7 @@ const checkPendingTx = async () => {
       if (irrigateBalance >= amountToTransfer) {
         console.log("transfering:", amountToTransfer, "DAI to", tx.associationAddress);
         await web3Functions.transferDaiFromIrrigate(tx.associationAddress, amountToTransfer.toString(), tx.donationId);
-        // const sendTx = await web3Functions.transferDaiFromIrrigate(tx.associationAddress, amountToTransfer.toString());
-        // if (sendTx) {
-        //   tx.transferStatus = "transferred";
-        //   await transactionService.serviceUpdateTx({ "donorAddress": tx.donorAddress, "amount": tx.amount }, tx);
-        // }
+        return;
       }
     }
   }
@@ -64,21 +60,15 @@ const ERC20SentListener = async () => {
   const web3 = new Web3(config.web3.localProvider);
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
-  // const daiAddress = config.web3.dai;
-  // const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
   
   await irrigateInstance.events.TokenTransfer({ fromBlock: "latest" })
   .on("connected", (subscriptionId: any) => {
     console.log("ERC20 Sending listener from Irrigate contract started");
   })
   .on('data', async (event: any) => {
-    const initialAmount = (parseInt(event.returnValues.amount) / (1 - ( 1 / 100)));
-    const filter = { associationAddress: event.returnValues.dest, amount: initialAmount.toString() };
+    const filter = { donationId: event.returnValues.donationId };
     const query = { "transferStatus": "transferred" };
     await transactionService.serviceUpdateTx(filter, query)
-    // .then(() => {
-    //   checkPendingTx();
-    // })
     .then(() => {
       ERC20SentListener();
     })
