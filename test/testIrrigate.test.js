@@ -81,25 +81,25 @@ contract("Irrigate", (accounts) => {
     });
     
     it("can transfer Dai from Irrigate contract to another address", async () => {
-      await irrigate.transferToken(association, 20, { from: newOwner });
+      await irrigate.transferToken(association, 20, "mockDonationId", { from: newOwner });
       
       const associationBalance = await dai.balanceOf(association);
       assert.equal(associationBalance, 20, "The balance of association should be equal to 20 Dai");
     });
 
     it("can transfer Dai from Irrigate contract to the owner", async () => {
-      await irrigate.transferToken(newOwner, 30, { from: newOwner });
+      await irrigate.transferToken(newOwner, 30, "mockDonationId", { from: newOwner });
       
       const newOwnerBalance = await dai.balanceOf(newOwner);
       assert.equal(newOwnerBalance, 30, "The balance of newOwner should be equal to 30 Dai");
     });
     
     it("should reverts transferToken when sender is not authorized", async () => {
-      await expectRevert(irrigate.transferToken(originalOwner, 20, { from: originalOwner }), "Ownable: caller is not the owner");
+      await expectRevert(irrigate.transferToken(originalOwner, 20, "mockDonationId", { from: originalOwner }), "Ownable: caller is not the owner");
     });
 
     it("should reverts transferToken when balance is too low", async () => {
-      await expectRevert(irrigate.transferToken(association, 200, { from: newOwner }), "Insufficient balance");
+      await expectRevert(irrigate.transferToken(association, 200, "mockDonationId", { from: newOwner }), "Insufficient balance");
     });
   });
   

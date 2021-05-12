@@ -1,6 +1,7 @@
 export default interface ITx {
   _id?: string,
   date?: string,
+  donationId: string,
   associationName: string,
   associationAddress: string,
   amount: string,

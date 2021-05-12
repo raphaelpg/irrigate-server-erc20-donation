@@ -24,7 +24,7 @@ const deployDaiContract = async () => {
   .send({ gas: 2000000, gasPrice: gasPrice, from: owner })
   .on('error', error => { console.log(error) })
   .on('receipt', receipt => {
-    console.log("Dai contract successfully deployed at", receipt.contractAddress, " and gas cost is:", receipt.gasUsed)
+    console.log("Dai contract successfully deployed at", receipt.contractAddress, "and gas cost is:", receipt.gasUsed)
   });
   return dai;
 };
@@ -39,17 +39,17 @@ const deployIrrigateContract = async (tokenAddress: string) => {
   .send({ gas: 1500000, gasPrice: gasPrice, from: config.web3.owner })
   .on('error', error => { console.log(error) })
   .on('receipt', receipt => {
-    console.log("Irrigate contract successfully deployed at", receipt.contractAddress, " and gas cost is:", receipt.gasUsed)
+    console.log("Irrigate contract successfully deployed at", receipt.contractAddress, "and gas cost is:", receipt.gasUsed)
   });
   return irrigate;
 };
 
 //transfer dai
-const transferDaiFromIrrigate = async (dst: string, amount: string) => {
+const transferDaiFromIrrigate = async (dst: string, amount: string, donationId: string) => {
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   let result: boolean = false;
-  await irrigateInstance.methods.transferToken(dst, amount)
+  await irrigateInstance.methods.transferToken(dst, amount, donationId)
   .send({ from: config.web3.owner })
   .on('receipt', (receipt: any) => {
     result = true;
@@ -61,10 +61,18 @@ const transferDaiFromIrrigate = async (dst: string, amount: string) => {
   return result;
 }
 
+//get dai balance
+const getDaiBalance = async (address: string) => {
+  const daiAddress = config.web3.dai;
+  const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
+  return await daiInstance.methods.balanceOf(address).call();
+}
+
 export default {
   deployDaiContract,
   deployIrrigateContract,
-  transferDaiFromIrrigate
+  transferDaiFromIrrigate,
+  getDaiBalance
 }
 
 /*

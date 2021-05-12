@@ -29,6 +29,7 @@ const findTxByAddressAndAmount: (filter : {}) => Promise<ITx[]> = async (filter)
 
 const serviceAddTx = async (query: ITx, status: string) => {
   try {
+    query.donationId = Date.now().toString() + query.donorAddress + query.associationAddress;
     query.fundsStatus = status;
     query.transferStatus = "pending";
     query.fee = (parseInt(query.amount) / 100).toString();

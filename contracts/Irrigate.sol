@@ -12,7 +12,7 @@ contract Irrigate is Ownable, ReentrancyGuard, Pausable {
   event ReceivedEther(address sender, uint amount);
   event EtherSent(address dest, uint amount);
   event TokenAddressChanged(address previousToken, address newToken);
-  event TokenTransfer(address dest, uint amount);
+  event TokenTransfer(address dest, uint amount, string donationId);
   
   constructor(address _tokenAddress) {
     tokenAddress = _tokenAddress;
@@ -46,10 +46,10 @@ contract Irrigate is Ownable, ReentrancyGuard, Pausable {
     emit TokenAddressChanged(previousTokenAddress, tokenAddress);
   }
 
-  function transferToken(address dest, uint amount) public whenNotPaused onlyOwner nonReentrant {
+  function transferToken(address dest, uint amount, string memory donationId) public whenNotPaused onlyOwner nonReentrant {
     Dai tokenContract = Dai(tokenAddress);
     require(tokenContract.balanceOf(address(this)) >= amount, "Insufficient balance");
     require(tokenContract.transferFrom(address(this), dest, amount) == true, "Could not send tokens to the buyer");
-    emit TokenTransfer(dest, amount);
+    emit TokenTransfer(dest, amount, donationId);
   }
 }
