@@ -48,6 +48,10 @@ const listenToTransfer = async () => {
     .then(() => {
       listenToTransfer();
     })
+    .catch(error => {
+      console.log(error);
+      listenToTransfer();
+    })
   })
   .on('error', (error: any) => {
     console.log(error);
