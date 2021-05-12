@@ -10,15 +10,15 @@ const getTxs = async (req: Request, res: Response) => {
 	};
 };
 
-const findTxs = async (req: Request, res: Response) => {
-	let query = req.body;
-	try {
-		const txs = await transactionService.serviceGetTxByAddressAmount(query.donorAddress);
-		return res.status(200).json({ status: 200, data: txs, msg: "Txs retrieved successfully" });
-	} catch (e) {
-		return res.status(400).json({ status: 400, msg: e.message });
-	};
-};
+// const findTxs = async (req: Request, res: Response) => {
+// 	let query = req.body;
+// 	try {
+// 		const txs = await transactionService.serviceGetTxByAddressAmount(query.donorAddress);
+// 		return res.status(200).json({ status: 200, data: txs, msg: "Txs retrieved successfully" });
+// 	} catch (e) {
+// 		return res.status(400).json({ status: 400, msg: e.message });
+// 	};
+// };
 
 const addTx = async (req: Request, res: Response) => {
 	let query = req.body;
@@ -51,21 +51,10 @@ const updateTx = async (req: Request, res: Response) => {
 	};
 };
 
-const give = async (req: Request, res: Response) => {
-	let query = req.body;
-	try {
-		await transactionService.serviceProcessDonation(query);
-		return res.status(200).json({ status: 200, msg: "Donation sent" });
-	} catch (e) {
-		return res.status(400).json({ status: 400, msg: e.message });
-	};
-};
-
 export default {
 	getTxs,
-	findTxs,
+	// findTxs,
 	addTx,
 	deleteTx,
-	updateTx,
-	give
+	updateTx
 };

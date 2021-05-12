@@ -55,10 +55,13 @@ const listenToTransfer = async () => {
 }
 
 const startTxProcessingEngine = async () => {
-  await checkPendingTx();
-  setTimeout(() => {
-    listenToTransfer();  
-  }, 30000);
+  await checkPendingTx()
+  .then(() => {
+    listenToTransfer();
+  })
+  // setTimeout(() => {
+  //   listenToTransfer();  
+  // }, 30000);
 }
 
 export default {

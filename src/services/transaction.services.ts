@@ -13,14 +13,19 @@ const serviceGetTx = async () => {
   };
 };
 
-const serviceGetTxByAddressAmount = async (donorAddress: string) => {
-  try {
-    const Txs = await dbAccessFunctions.find(txCollection, { donorAddress });
-    return Txs;
-  } catch (e) {
-    throw Error("Error retrieving transactions from database");
-  };
-};
+const findTxByAddressAndAmount: (filter : {}) => Promise<ITx[]> = async (filter) => {
+  const result = await dbAccessFunctions.find(txCollection, filter);
+  return result;
+}
+
+// const serviceGetTxByAddressAmount = async (donorAddress: string) => {
+//   try {
+//     const Txs = await dbAccessFunctions.find(txCollection, { donorAddress });
+//     return Txs;
+//   } catch (e) {
+//     throw Error("Error retrieving transactions from database");
+//   };
+// };
 
 const serviceAddTx = async (query: ITx, status: string) => {
   try {
@@ -43,7 +48,23 @@ const serviceDeleteTx = async (name: string) => {
   };
 };
 
+// const serviceUpdateTx = async (query: ITx) => {
+//   const txs = await findTxByAddress(query.donorAddress);
+//   if (txs.length === 0) {
+//     throw Error("Can't find transaction");
+//   };
+//   try {
+//     return await dbAccessFunctions.update(txCollection, {donorAddress: query.donorAddress}, query)
+//   } catch {
+//     throw Error("Error when trying to update");
+//   }
+// }
+
 const serviceUpdateTx = async (filter: {}, query: {}) => {
+  const txs = await findTxByAddressAndAmount(filter);
+  if (txs.length === 0) {
+    throw Error("Can't find transaction");
+  };
   try {
     await dbAccessFunctions.update(txCollection, filter, query);
     return;
@@ -52,46 +73,10 @@ const serviceUpdateTx = async (filter: {}, query: {}) => {
   };
 };
 
-const serviceProcessDonation = async (query: ITx) => {
-  try {
-    //add pending tx
-    await serviceAddTx(query, "pending");
-    //listen to web3 tx confirmation
-    
-    //compare web3 tx amount and sender with pending tx
-    //if match, transfer (amount -1%) to association
-    //update tx status  
-    (
-      setTimeout(async () => {
-        const filter = { donorAddress: query.donorAddress, amount: query.amount };
-        query.fundsStatus = "received";
-        await serviceUpdateTx(filter, query);
-        return
-      }, 5000)
-    );
-  } catch (e) {
-    throw Error("Error while proceeding donation");
-  }
-}
-
 export default {
   serviceGetTx,
-  serviceGetTxByAddressAmount,
+  // serviceGetTxByAddressAmount,
   serviceAddTx,
   serviceDeleteTx,
-  serviceUpdateTx,
-  serviceProcessDonation
+  serviceUpdateTx
 };
-
-/*
-web3.eth.sendTransaction({from: '0x123...', data: '0x432...'})
-.once('sending', function(payload){ ... })
-.once('sent', function(payload){ ... })
-.once('transactionHash', function(hash){ ... })
-.once('receipt', function(receipt){ ... })
-.on('confirmation', function(confNumber, receipt, latestBlockHash){ ... })
-.on('error', function(error){ ... })
-.then(function(receipt){
-    // will be fired once the receipt is mined
-})
-*/

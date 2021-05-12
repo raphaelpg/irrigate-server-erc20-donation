@@ -52,8 +52,6 @@ const transferDaiFromIrrigate = async (dst: string, amount: string) => {
   await irrigateInstance.methods.transferToken(dst, amount)
   .send({ from: config.web3.owner })
   .on('receipt', (receipt: any) => {
-    // console.log("receipt:", receipt)
-    // console.log("receipt.gasUsed:", receipt.gasUsed);
     result = true;
   })
   .on('error', (error: any) => {
@@ -63,39 +61,21 @@ const transferDaiFromIrrigate = async (dst: string, amount: string) => {
   return result;
 }
 
-//subscribe to dai transfer event
-const subscribeDaiTransfer = async () => {
-  const daiAddress = config.web3.dai;
-  const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
-  
-  let receivedTx = await daiInstance.events.Transfer({
-    filter: {dst: config.web3.irrigate},
-    fromBlock: 0
-  })
-  .on("connected", (subscriptionId: any) => {
-    console.log("Subscribed to Transfer event at:", daiAddress, ", subscriptionId:", subscriptionId);
-  })
-  .on('data', (event: any) => {
-    console.log("From:", event.returnValues.src);
-    console.log("To:", event.returnValues.dst);
-    console.log("Amount:", event.returnValues.wad);
-    // result = true;
-    let txParams = {
-      from: event.returnValues.src,
-      to: event.returnValues.dst,
-      amount: event.returnValues.wad
-    };
-    return txParams;
-  })
-  .on('error', (error: any) => {
-    console.log(error);
-  });
-  return receivedTx;
-}
-
 export default {
   deployDaiContract,
   deployIrrigateContract,
-  transferDaiFromIrrigate,
-  subscribeDaiTransfer
+  transferDaiFromIrrigate
 }
+
+/*
+web3.eth.sendTransaction({from: '0x123...', data: '0x432...'})
+.once('sending', function(payload){ ... })
+.once('sent', function(payload){ ... })
+.once('transactionHash', function(hash){ ... })
+.once('receipt', function(receipt){ ... })
+.on('confirmation', function(confNumber, receipt, latestBlockHash){ ... })
+.on('error', function(error){ ... })
+.then(function(receipt){
+    // will be fired once the receipt is mined
+})
+*/
