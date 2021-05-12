@@ -16,15 +16,15 @@ const returnGasPrice = async () => {
 //deploy dai contract
 const deployDaiContract = async () => {
   console.log("starting Dai contract local deployment");
-
+  const owner = config.web3.owner;
   const chainId = await web3.eth.getChainId();
   const gasPrice = await returnGasPrice();
   const dai = await new web3.eth.Contract(daiInterface.abi as any)
   .deploy({ data: daiInterface.bytecode, arguments: [chainId] })
-  .send({ gas: 2000000, gasPrice: gasPrice, from: config.web3.owner })
+  .send({ gas: 2000000, gasPrice: gasPrice, from: owner })
   .on('error', error => { console.log(error) })
   .on('receipt', receipt => {
-    console.log("Dai contract successfully deployed at", receipt.contractAddress, " and gas cost is:", receipt.gasUsed) // contains the new contract address
+    console.log("Dai contract successfully deployed at", receipt.contractAddress, " and gas cost is:", receipt.gasUsed)
   });
   return dai;
 };
@@ -39,20 +39,21 @@ const deployIrrigateContract = async (tokenAddress: string) => {
   .send({ gas: 1500000, gasPrice: gasPrice, from: config.web3.owner })
   .on('error', error => { console.log(error) })
   .on('receipt', receipt => {
-    console.log("Irrigate contract successfully deployed at", receipt.contractAddress, " and gas cost is:", receipt.gasUsed) // contains the new contract address
+    console.log("Irrigate contract successfully deployed at", receipt.contractAddress, " and gas cost is:", receipt.gasUsed)
   });
   return irrigate;
 };
 
-const transferDai = async (dst: string, amount: string) => {
-  const daiAddress = config.web3.dai;
-  const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
+//transfer dai
+const transferDaiFromIrrigate = async (dst: string, amount: string) => {
+  const irrigateAddress = config.web3.irrigate;
+  const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   let result: boolean = false;
-  await daiInstance.methods.transfer(dst, amount)
+  await irrigateInstance.methods.transferToken(dst, amount)
   .send({ from: config.web3.owner })
   .on('receipt', (receipt: any) => {
-    console.log("receipt:", receipt)
-    console.log("receipt.gasUsed:", receipt.gasUsed);
+    // console.log("receipt:", receipt)
+    // console.log("receipt.gasUsed:", receipt.gasUsed);
     result = true;
   })
   .on('error', (error: any) => {
@@ -66,8 +67,8 @@ const transferDai = async (dst: string, amount: string) => {
 const subscribeDaiTransfer = async () => {
   const daiAddress = config.web3.dai;
   const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
-
-  daiInstance.events.Transfer({
+  
+  let receivedTx = await daiInstance.events.Transfer({
     filter: {dst: config.web3.irrigate},
     fromBlock: 0
   })
@@ -75,20 +76,26 @@ const subscribeDaiTransfer = async () => {
     console.log("Subscribed to Transfer event at:", daiAddress, ", subscriptionId:", subscriptionId);
   })
   .on('data', (event: any) => {
-    console.log("transfer received:");
     console.log("From:", event.returnValues.src);
     console.log("To:", event.returnValues.dst);
     console.log("Amount:", event.returnValues.wad);
-    
+    // result = true;
+    let txParams = {
+      from: event.returnValues.src,
+      to: event.returnValues.dst,
+      amount: event.returnValues.wad
+    };
+    return txParams;
   })
   .on('error', (error: any) => {
     console.log(error);
   });
+  return receivedTx;
 }
 
 export default {
   deployDaiContract,
   deployIrrigateContract,
-  transferDai,
+  transferDaiFromIrrigate,
   subscribeDaiTransfer
 }

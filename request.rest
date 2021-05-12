@@ -73,9 +73,9 @@ Content-Type: application/json
 
 {
   "associationName": "Red Cross", 
-  "associationAddress": "0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf", 
-  "amount": "10", 
-  "donorAddress": "0xa7b2a787222cc8395860217A17CEb34019866d5e"
+  "associationAddress": "0x1a4D6330d88659a04136cFAC6F5563486588168A", 
+  "amount": "100", 
+  "donorAddress": "0x2C158c540a7cCd78A99409DFA39486136485Cab8"
 }
 
 ###

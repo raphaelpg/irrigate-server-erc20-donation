@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import 'dotenv/config';
 import router from './routes/router';
 import rateLimiterDDos from './middlewares/ddosLimiter';
-import web3Functions from './functions/web3Functions';
 import txProcessing from './txProcessing';
 
 
@@ -18,7 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(router);
 
-// web3Functions.subscribeDaiTransfer();
-txProcessing.checkPendingTx();
+txProcessing.startTxProcessingEngine();
 
 export default app;
