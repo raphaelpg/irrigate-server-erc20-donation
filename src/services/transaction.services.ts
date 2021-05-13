@@ -18,10 +18,10 @@ const findTxByAddressAndAmount: (filter : {}) => Promise<ITx[]> = async (filter)
   return result;
 }
 
-const serviceAddTx = async (query: ITx, status: string) => {
+const serviceAddTx = async (query: ITx) => {
   try {
     query.donationId = Date.now().toString() + query.donorAddress + query.associationAddress;
-    query.fundsStatus = status;
+    query.fundsStatus = "pending";
     query.transferStatus = "pending";
     query.fee = (parseInt(query.amount) / config.params.fee).toString();
     await dbAccessFunctions.insert(txCollection, { ...query });
