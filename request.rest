@@ -94,7 +94,7 @@ Content-Type: application/json
   "associationName": "Red Cross", 
   "associationAddress": "0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf", 
   "amount": "100", 
-  "donorAddress": "0x2640fdC59b735fFA4920971575A3eDee393d195F",
+  "donorAddress": "0xc7b2946c4E5Af0E4fF3a78B6BBD573A2Bf11cFcF",
   "currency": "dai"
 }
 
