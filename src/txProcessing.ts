@@ -5,13 +5,14 @@ import transactionService from './services/transaction.services';
 import daiInterface from './contracts/Dai.json';
 import irrigateInterface from './contracts/Irrigate.json';
 import associationService from './services/association.service';
+import ITx from './interfaces/tx';
 
 const checkPendingTx = async () => {
   console.log("Starting pending transactions checks...");
   const txs = await transactionService.serviceGetTx();
-  for (const tx of txs) {
+  txs.forEach(async (tx: ITx) => {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
-      const amountToTransfer = Math.floor(tx.amount - (tx.amount / config.params.fee));
+      const amountToTransfer = Math.floor(parseInt(tx.amount) - (parseInt(tx.amount) / config.params.fee));
       if (tx.currency === config.params.erc20Name) {
         const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance >= amountToTransfer) {
@@ -20,12 +21,12 @@ const checkPendingTx = async () => {
         }
       }
     }
-  }
+  })
   console.log("Pending transactions checks ended");
   return;
 }
 
-const ERC20ReceivedListener = async (web3: Web3) => {
+const ERC20INListener = async (web3: Web3) => {
   const irrigateAddress = config.web3.irrigate;
   const erc20Address = config.web3.erc20;
   const erc20Instance = new web3.eth.Contract(daiInterface.abi as any, erc20Address);
@@ -38,18 +39,18 @@ const ERC20ReceivedListener = async (web3: Web3) => {
     console.log("ERC20 IN listener to Irrigate contract started");
   })
   .on('data', async (event: any) => {
-    const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: config.params.erc20Name };
+    const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: config.params.erc20Name, fundsStatus: "pending" };
     const query = { "fundsStatus": "received" };
     await transactionService.serviceUpdateTx(filter, query)
     .then(async () => {
       await checkPendingTx();
     })
     .then(() => {
-      ERC20ReceivedListener(web3);
+      ERC20INListener(web3);
     })
     .catch(error => {
       console.log(error);
-      ERC20ReceivedListener(web3);
+      ERC20INListener(web3);
     })
   })
   .on('error', (error: any) => {
@@ -57,7 +58,7 @@ const ERC20ReceivedListener = async (web3: Web3) => {
   });
 }
 
-const ERC20SentListener = async (web3: Web3) => {
+const ERC20OUTListener = async (web3: Web3) => {
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   
@@ -66,6 +67,7 @@ const ERC20SentListener = async (web3: Web3) => {
     console.log("ERC20 OUT listener from Irrigate contract started");
   })
   .on('data', async (event: any) => {
+    console.log(event.returnValues.amount, "transferred to", event.returnValues.dest)
     const filter = { donationId: event.returnValues.donationId };
     const txQuery = { "transferStatus": "transferred" };
     await transactionService.serviceUpdateTx(filter, txQuery)
@@ -76,11 +78,11 @@ const ERC20SentListener = async (web3: Web3) => {
       await associationService.serviceUpdateAssociation({ address: event.returnValues.dest }, associationQuery);
     })
     .then(() => {
-      ERC20SentListener(web3);
+      ERC20OUTListener(web3);
     })
     .catch(error => {
       console.log(error);
-      ERC20SentListener(web3);
+      ERC20OUTListener(web3);
     })
   })
   .on('error', (error: any) => {
@@ -94,9 +96,9 @@ const startTxProcessingEngine = async () => {
   await web3.eth.net.isListening()
   .then(async () => {
     console.log('Connected to a node');
-    ERC20SentListener(web3);
+    ERC20OUTListener(web3);
     await checkPendingTx();
-    ERC20ReceivedListener(web3);
+    ERC20INListener(web3);
   }).catch((e) => {
     console.log('Lost connection to the node, reconnecting');
     setTimeout(() => {
