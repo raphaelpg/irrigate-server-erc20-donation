@@ -7,8 +7,8 @@ import irrigateInterface from './contracts/Irrigate.json';
 import associationService from './services/association.service';
 import ITx from './interfaces/tx';
 
-const checkPendingTx = async () => {
-  console.log("Starting pending transactions checks...");
+const pendingTxChecker = async () => {
+  console.log("PENDING TX CHECKER: Starting pending transactions checks...");
   const txs = await transactionService.serviceGetTx();
   txs.forEach(async (tx: ITx) => {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
@@ -16,13 +16,13 @@ const checkPendingTx = async () => {
       if (tx.currency === config.params.erc20Name) {
         const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance >= amountToTransfer) {
-          console.log("transfering:", amountToTransfer, config.params.erc20Name, "to", tx.associationAddress);
+          console.log("Transfering:", amountToTransfer, config.params.erc20Name, "to", tx.associationAddress);
           await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer.toString(), tx.donationId);
         }
       }
     }
   })
-  console.log("Pending transactions checks ended");
+  console.log("PENDING TX CHECKER: Pending transactions checks ended");
   return;
 }
 
@@ -36,14 +36,15 @@ const ERC20INListener = async (web3: Web3) => {
     fromBlock: "latest"
   })
   .on("connected", () => {
-    console.log("ERC20 IN listener to Irrigate contract started");
+    console.log("ERC20 IN LISTENER: Started");
   })
   .on('data', async (event: any) => {
+    console.log("ERC20 IN LISTENER: Received", event.returnValues.wad, config.params.erc20Name, "from", event.returnValues.src);
     const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: config.params.erc20Name, fundsStatus: "pending" };
     const query = { "fundsStatus": "received" };
     await transactionService.serviceUpdateTx(filter, query)
     .then(async () => {
-      await checkPendingTx();
+      await pendingTxChecker();
     })
     .then(() => {
       ERC20INListener(web3);
@@ -64,10 +65,10 @@ const ERC20OUTListener = async (web3: Web3) => {
   
   await irrigateInstance.events.TokenTransfer({ fromBlock: "latest" })
   .on("connected", () => {
-    console.log("ERC20 OUT listener from Irrigate contract started");
+    console.log("ERC20 OUT LISTENER: Started");
   })
   .on('data', async (event: any) => {
-    console.log(event.returnValues.amount, "transferred to", event.returnValues.dest)
+    console.log("ERC20 OUT LISTENER:", event.returnValues.amount, "transferred to", event.returnValues.dest)
     const filter = { donationId: event.returnValues.donationId };
     const txQuery = { "transferStatus": "transferred" };
     await transactionService.serviceUpdateTx(filter, txQuery)
@@ -97,7 +98,7 @@ const startTxProcessingEngine = async () => {
   .then(async () => {
     console.log('Connected to a node');
     ERC20OUTListener(web3);
-    await checkPendingTx();
+    await pendingTxChecker();
     ERC20INListener(web3);
   }).catch((e) => {
     console.log('Lost connection to the node, reconnecting');
