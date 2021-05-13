@@ -10,7 +10,7 @@ const checkPendingTx = async () => {
   const txs = await transactionService.serviceGetTx();
   for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
-      const amountToTransfer = (tx.amount - (tx.amount / 100));
+      const amountToTransfer = (tx.amount - (tx.amount / config.params.fee));
       const irrigateBalance = parseInt(await web3Functions.getDaiBalance(config.web3.irrigate));
       if (irrigateBalance >= amountToTransfer) {
         console.log("transfering:", amountToTransfer, "DAI to", tx.associationAddress);
@@ -62,7 +62,7 @@ const ERC20SentListener = async () => {
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   
   await irrigateInstance.events.TokenTransfer({ fromBlock: "latest" })
-  .on("connected", (subscriptionId: any) => {
+  .on("connected", () => {
     console.log("ERC20 Sending listener from Irrigate contract started");
   })
   .on('data', async (event: any) => {

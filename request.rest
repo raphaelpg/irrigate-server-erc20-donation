@@ -16,7 +16,7 @@ Content-Type: application/json
   "logo":"",
   "contactName": "Mock contact",
   "contactEmail": "mockEmail@mock.com"
-},
+}
 
 ###
 
@@ -92,9 +92,9 @@ Content-Type: application/json
 
 {
   "associationName": "Red Cross", 
-  "associationAddress": "0xcC2B067B2F24e33D68f9d913cCe5593dd9668D43", 
+  "associationAddress": "0x48BDCC0016bAa0423965cfe4964F7fD642417fe9", 
   "amount": "100", 
-  "donorAddress": "0x92128d1616Cb7f3089657146275Ab8b4C35d9005"
+  "donorAddress": "0xBDc8817407682775A064b41e232Be10DeBE1098a"
 }
 
 

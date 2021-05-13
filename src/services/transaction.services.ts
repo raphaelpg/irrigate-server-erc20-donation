@@ -18,21 +18,12 @@ const findTxByAddressAndAmount: (filter : {}) => Promise<ITx[]> = async (filter)
   return result;
 }
 
-// const serviceGetTxByAddressAmount = async (donorAddress: string) => {
-//   try {
-//     const Txs = await dbAccessFunctions.find(txCollection, { donorAddress });
-//     return Txs;
-//   } catch (e) {
-//     throw Error("Error retrieving transactions from database");
-//   };
-// };
-
 const serviceAddTx = async (query: ITx, status: string) => {
   try {
     query.donationId = Date.now().toString() + query.donorAddress + query.associationAddress;
     query.fundsStatus = status;
     query.transferStatus = "pending";
-    query.fee = (parseInt(query.amount) / 100).toString();
+    query.fee = (parseInt(query.amount) / config.params.fee).toString();
     await dbAccessFunctions.insert(txCollection, { ...query });
     return;
   } catch (e) {
@@ -49,18 +40,6 @@ const serviceDeleteTx = async (name: string) => {
   };
 };
 
-// const serviceUpdateTx = async (query: ITx) => {
-//   const txs = await findTxByAddress(query.donorAddress);
-//   if (txs.length === 0) {
-//     throw Error("Can't find transaction");
-//   };
-//   try {
-//     return await dbAccessFunctions.update(txCollection, {donorAddress: query.donorAddress}, query)
-//   } catch {
-//     throw Error("Error when trying to update");
-//   }
-// }
-
 const serviceUpdateTx = async (filter: {}, query: {}) => {
   const txs = await findTxByAddressAndAmount(filter);
   if (txs.length === 0) {
@@ -76,7 +55,6 @@ const serviceUpdateTx = async (filter: {}, query: {}) => {
 
 export default {
   serviceGetTx,
-  // serviceGetTxByAddressAmount,
   serviceAddTx,
   serviceDeleteTx,
   serviceUpdateTx
