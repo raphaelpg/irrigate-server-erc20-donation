@@ -4,6 +4,7 @@ import web3Functions from './functions/web3Functions';
 import transactionService from './services/transaction.services';
 import daiInterface from './contracts/Dai.json';
 import irrigateInterface from './contracts/Irrigate.json';
+import associationService from './services/association.service';
 
 const checkPendingTx = async () => {
   console.log("Starting pending transactions checks...");
@@ -66,8 +67,14 @@ const ERC20SentListener = async (web3: Web3) => {
   })
   .on('data', async (event: any) => {
     const filter = { donationId: event.returnValues.donationId };
-    const query = { "transferStatus": "transferred" };
-    await transactionService.serviceUpdateTx(filter, query)
+    const txQuery = { "transferStatus": "transferred" };
+    await transactionService.serviceUpdateTx(filter, txQuery)
+    .then(async () => {
+      const targetAssociation = await associationService.serviceGetAssociationByFilter({ address: event.returnValues.dest });
+      const newAmount = parseInt(targetAssociation[0].totalDaiRaised) + parseInt(event.returnValues.amount);
+      const associationQuery = { "totalDaiRaised": newAmount };
+      await associationService.serviceUpdateAssociation({ address: event.returnValues.dest }, associationQuery);
+    })
     .then(() => {
       ERC20SentListener(web3);
     })

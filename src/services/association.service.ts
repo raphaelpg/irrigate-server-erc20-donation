@@ -13,6 +13,15 @@ const serviceGetAssociations = async () => {
   };
 };
 
+const serviceGetAssociationByFilter = async (filter: {}) => {
+  try {
+    const associations = await dbAccessFunctions.find(associationsCollection, filter);
+    return associations;
+  } catch (e) {
+    throw Error("Error retrieving associations from database");
+  };
+};
+
 const serviceAddAssociation = async (query: IAssociation) => {
   try {
     query = { ...query, totalDaiRaised: 0, totalEthRaised: 0 }
@@ -32,9 +41,9 @@ const serviceDeleteAssociation = async (name: string) => {
   };
 };
 
-const serviceUpdateAssociation = async (name: {}, query: {}) => {
+const serviceUpdateAssociation = async (filter: {}, query: {}) => {
   try {
-    await dbAccessFunctions.update(associationsCollection, name, query);
+    await dbAccessFunctions.update(associationsCollection, filter, query);
     return;
   } catch (e) {
     throw Error("Error while updating association"); 
@@ -43,6 +52,7 @@ const serviceUpdateAssociation = async (name: {}, query: {}) => {
 
 export default {
   serviceGetAssociations,
+  serviceGetAssociationByFilter,
   serviceAddAssociation,
   serviceDeleteAssociation,
   serviceUpdateAssociation
