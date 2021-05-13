@@ -11,11 +11,13 @@ const checkPendingTx = async () => {
   for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
       const amountToTransfer = (tx.amount - (tx.amount / config.params.fee));
-      const irrigateBalance = parseInt(await web3Functions.getDaiBalance(config.web3.irrigate));
-      if (irrigateBalance >= amountToTransfer) {
-        console.log("transfering:", amountToTransfer, "DAI to", tx.associationAddress);
-        await web3Functions.transferDaiFromIrrigate(tx.associationAddress, amountToTransfer.toString(), tx.donationId);
-        return;
+      if (tx.currency === "dai") {
+        const irrigateBalance = parseInt(await web3Functions.getDaiBalance(config.web3.irrigate));
+        if (irrigateBalance >= amountToTransfer) {
+          console.log("transfering:", amountToTransfer, "DAI to", tx.associationAddress);
+          await web3Functions.transferDaiFromIrrigate(tx.associationAddress, amountToTransfer.toString(), tx.donationId);
+          return;
+        }
       }
     }
   }
@@ -37,7 +39,7 @@ const ERC20ReceivedListener = async () => {
     console.log("ERC20 Receiving listener at Irrigate contract started");
   })
   .on('data', async (event: any) => {
-    const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad };
+    const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: "dai"};
     const query = { "fundsStatus": "received" };
     await transactionService.serviceUpdateTx(filter, query)
     .then(() => {
