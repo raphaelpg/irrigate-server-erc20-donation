@@ -11,12 +11,11 @@ const checkPendingTx = async () => {
   for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
       const amountToTransfer = (tx.amount - (tx.amount / config.params.fee));
-      if (tx.currency === "dai") {
-        const irrigateBalance = parseInt(await web3Functions.getDaiBalance(config.web3.irrigate));
+      if (tx.currency === config.params.erc20Name) {
+        const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance >= amountToTransfer) {
-          console.log("transfering:", amountToTransfer, "DAI to", tx.associationAddress);
-          await web3Functions.transferDaiFromIrrigate(tx.associationAddress, amountToTransfer.toString(), tx.donationId);
-          return;
+          console.log("transfering:", amountToTransfer, config.params.erc20Name, "to", tx.associationAddress);
+          await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer.toString(), tx.donationId);
         }
       }
     }
@@ -28,18 +27,18 @@ const checkPendingTx = async () => {
 const ERC20ReceivedListener = async () => {
   const web3 = new Web3(config.web3.localProvider);
   const irrigateAddress = config.web3.irrigate;
-  const daiAddress = config.web3.dai;
-  const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
+  const erc20Address = config.web3.erc20;
+  const erc20Instance = new web3.eth.Contract(daiInterface.abi as any, erc20Address);
   
-  await daiInstance.events.Transfer({
+  await erc20Instance.events.Transfer({
     filter: { dst: irrigateAddress },
     fromBlock: "latest"
   })
-  .on("connected", (subscriptionId: any) => {
-    console.log("ERC20 Receiving listener at Irrigate contract started");
+  .on("connected", () => {
+    console.log("ERC20 IN listener to Irrigate contract started");
   })
   .on('data', async (event: any) => {
-    const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: "dai"};
+    const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: config.params.erc20Name };
     const query = { "fundsStatus": "received" };
     await transactionService.serviceUpdateTx(filter, query)
     .then(() => {
@@ -65,7 +64,7 @@ const ERC20SentListener = async () => {
   
   await irrigateInstance.events.TokenTransfer({ fromBlock: "latest" })
   .on("connected", () => {
-    console.log("ERC20 Sending listener from Irrigate contract started");
+    console.log("ERC20 OUT listener from Irrigate contract started");
   })
   .on('data', async (event: any) => {
     const filter = { donationId: event.returnValues.donationId };

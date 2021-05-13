@@ -22,13 +22,14 @@ const JWT = {
 const WEB3 = {
   provider: "wss://ropsten.infura.io/ws/v3/" + process.env.INFURA_PROJECT_ID,
   localProvider: "ws://localhost:7545",
-  owner: "0x0DCE83Efdbb0D67810131020D37fbB9Aa1c5D25E",
-  dai: "0x4D3A6e9f0A82Fe301752CB7AC9bE4e8674EF1b62",
-  irrigate: "0x9A6E37Ab764CB76204A7BCD092102BD15fA7C250",
+  owner: "0xd7B0573b57496c113E514dd31f3c1EA73B80E535",
+  erc20: "0x0f33D36c2264e8A9D15fEBf1a680654FF536fB63",
+  irrigate: "0xeC8512577a04601Bc480F9313e9Dbb3c4A3286f0",
 }
 
 const PARAMS = {
-  fee: 100
+  fee: 100,
+  erc20Name: "dai"
 }
 
 const config = {

@@ -92,9 +92,9 @@ Content-Type: application/json
 
 {
   "associationName": "Red Cross", 
-  "associationAddress": "0x1d91267aA919144AEc08254bF904fC9C5B21354c", 
+  "associationAddress": "0xB6c97a71aEe96C9ef2CB8200b83779141edEc721", 
   "amount": "100", 
-  "donorAddress": "0x6bFB7F6Ea3Ac86E880bd1715A152ee9D22B87032",
+  "donorAddress": "0x5EA95c6573e6a8339EF35efE0c2e36085F44860c",
   "currency": "dai"
 }
 

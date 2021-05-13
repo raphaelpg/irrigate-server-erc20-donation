@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import config from '../config/config';
-import daiInterface from '../contracts/Dai.json';
+import erc20Interface from '../contracts/Dai.json';
 import irrigateInterface from '../contracts/Irrigate.json';
 
 //setup web3
@@ -13,20 +13,20 @@ const returnGasPrice = async () => {
   return GasPrice.toFixed(0);
 }
 
-//deploy dai contract
-const deployDaiContract = async () => {
-  console.log("starting Dai contract local deployment");
+//deploy erc20 contract
+const deployERC20Contract = async () => {
+  console.log("starting erc20 contract local deployment");
   const owner = config.web3.owner;
   const chainId = await web3.eth.getChainId();
   const gasPrice = await returnGasPrice();
-  const dai = await new web3.eth.Contract(daiInterface.abi as any)
-  .deploy({ data: daiInterface.bytecode, arguments: [chainId] })
+  const erc20 = await new web3.eth.Contract(erc20Interface.abi as any)
+  .deploy({ data: erc20Interface.bytecode, arguments: [chainId] })
   .send({ gas: 2000000, gasPrice: gasPrice, from: owner })
   .on('error', error => { console.log(error) })
   .on('receipt', receipt => {
-    console.log("Dai contract successfully deployed at", receipt.contractAddress, "and gas cost is:", receipt.gasUsed)
+    console.log("ERC20 contract successfully deployed at", receipt.contractAddress, "and gas cost is:", receipt.gasUsed)
   });
-  return dai;
+  return erc20;
 };
 
 //deploy irrigate contract
@@ -44,8 +44,8 @@ const deployIrrigateContract = async (tokenAddress: string) => {
   return irrigate;
 };
 
-//transfer dai
-const transferDaiFromIrrigate = async (dst: string, amount: string, donationId: string) => {
+//transfer erc20
+const transferERC20FromIrrigate = async (dst: string, amount: string, donationId: string) => {
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   let result: boolean = false;
@@ -61,18 +61,18 @@ const transferDaiFromIrrigate = async (dst: string, amount: string, donationId: 
   return result;
 }
 
-//get dai balance
-const getDaiBalance = async (address: string) => {
-  const daiAddress = config.web3.dai;
-  const daiInstance = new web3.eth.Contract(daiInterface.abi as any, daiAddress);
-  return await daiInstance.methods.balanceOf(address).call();
+//get erc20 balance
+const getERC20Balance = async (address: string) => {
+  const erc20Address = config.web3.erc20;
+  const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
+  return await erc20Instance.methods.balanceOf(address).call();
 }
 
 export default {
-  deployDaiContract,
+  deployERC20Contract,
   deployIrrigateContract,
-  transferDaiFromIrrigate,
-  getDaiBalance
+  transferERC20FromIrrigate,
+  getERC20Balance
 }
 
 /*
