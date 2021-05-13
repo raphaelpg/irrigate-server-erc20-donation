@@ -11,7 +11,7 @@ const checkPendingTx = async () => {
   const txs = await transactionService.serviceGetTx();
   for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
-      const amountToTransfer = (tx.amount - (tx.amount / config.params.fee));
+      const amountToTransfer = Math.floor(tx.amount - (tx.amount / config.params.fee));
       if (tx.currency === config.params.erc20Name) {
         const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance >= amountToTransfer) {
@@ -94,9 +94,9 @@ const startTxProcessingEngine = async () => {
   await web3.eth.net.isListening()
   .then(async () => {
     console.log('Connected to a node');
+    ERC20SentListener(web3);
     await checkPendingTx();
     ERC20ReceivedListener(web3);
-    ERC20SentListener(web3);
   }).catch((e) => {
     console.log('Lost connection to the node, reconnecting');
     setTimeout(() => {
