@@ -24,8 +24,7 @@ const checkPendingTx = async () => {
   return;
 }
 
-const ERC20ReceivedListener = async () => {
-  const web3 = new Web3(config.web3.localProvider);
+const ERC20ReceivedListener = async (web3: Web3) => {
   const irrigateAddress = config.web3.irrigate;
   const erc20Address = config.web3.erc20;
   const erc20Instance = new web3.eth.Contract(daiInterface.abi as any, erc20Address);
@@ -41,15 +40,15 @@ const ERC20ReceivedListener = async () => {
     const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: config.params.erc20Name };
     const query = { "fundsStatus": "received" };
     await transactionService.serviceUpdateTx(filter, query)
-    .then(() => {
-      checkPendingTx();
+    .then(async () => {
+      await checkPendingTx();
     })
     .then(() => {
-      ERC20ReceivedListener();
+      ERC20ReceivedListener(web3);
     })
     .catch(error => {
       console.log(error);
-      ERC20ReceivedListener();
+      ERC20ReceivedListener(web3);
     })
   })
   .on('error', (error: any) => {
@@ -57,8 +56,7 @@ const ERC20ReceivedListener = async () => {
   });
 }
 
-const ERC20SentListener = async () => {
-  const web3 = new Web3(config.web3.localProvider);
+const ERC20SentListener = async (web3: Web3) => {
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   
@@ -71,22 +69,33 @@ const ERC20SentListener = async () => {
     const query = { "transferStatus": "transferred" };
     await transactionService.serviceUpdateTx(filter, query)
     .then(() => {
-      ERC20SentListener();
+      ERC20SentListener(web3);
     })
     .catch(error => {
       console.log(error);
-      ERC20SentListener();
+      ERC20SentListener(web3);
     })
   })
   .on('error', (error: any) => {
     console.log(error);
+    startTxProcessingEngine();
   });
 }
 
 const startTxProcessingEngine = async () => {
-  await checkPendingTx();
-  ERC20ReceivedListener();
-  ERC20SentListener();
+  const web3 = await new Web3(config.web3.localProvider);
+  await web3.eth.net.isListening()
+  .then(async () => {
+    console.log('Connected to a node');
+    await checkPendingTx();
+    ERC20ReceivedListener(web3);
+    ERC20SentListener(web3);
+  }).catch((e) => {
+    console.log('Lost connection to the node, reconnecting');
+    setTimeout(() => {
+      startTxProcessingEngine()
+    }, 1000);
+  })
 }
 
 export default {
