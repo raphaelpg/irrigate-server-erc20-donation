@@ -26,9 +26,9 @@ const serviceAddTx = async (query: ITx) => {
   };
 };
 
-const serviceDeleteTx = async (name: string) => {
+const serviceDeleteTx = async (filter: {}) => {
   try {
-    await dbAccessFunctions.remove(txCollection, { name });
+    await dbAccessFunctions.remove(txCollection, filter);
     return;
   } catch (e) {
     throw Error("Error while deleting transaction");
