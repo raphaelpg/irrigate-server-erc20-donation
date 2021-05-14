@@ -3,17 +3,14 @@ import config from '../config/config';
 import erc20Interface from '../contracts/Dai.json';
 import irrigateInterface from '../contracts/Irrigate.json';
 
-//setup web3
 const web3 = new Web3(config.web3.localProvider);
 
-//set gas price
 const returnGasPrice = async () => {
   let GasPrice = parseInt(await web3.eth.getGasPrice());
   GasPrice = GasPrice + parseInt(web3.utils.toHex(web3.utils.toWei("0.1111", "gwei")));
   return GasPrice.toFixed(0);
-}
+};
 
-//deploy erc20 contract
 const deployERC20Contract = async () => {
   console.log("starting erc20 contract local deployment");
   const owner = config.web3.owner;
@@ -29,7 +26,6 @@ const deployERC20Contract = async () => {
   return erc20;
 };
 
-//deploy irrigate contract
 const deployIrrigateContract = async (tokenAddress: string) => {
   console.log("starting Irrigate contract local deployment");
 
@@ -44,7 +40,6 @@ const deployIrrigateContract = async (tokenAddress: string) => {
   return irrigate;
 };
 
-//transfer erc20
 const transferERC20FromIrrigate = async (dst: string, amount: string, donationId: string) => {
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
@@ -59,21 +54,20 @@ const transferERC20FromIrrigate = async (dst: string, amount: string, donationId
     result = false;
   });
   return result;
-}
+};
 
-//get erc20 balance
 const getERC20Balance = async (address: string) => {
   const erc20Address = config.web3.erc20;
   const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
   return await erc20Instance.methods.balanceOf(address).call();
-}
+};
 
 export default {
   deployERC20Contract,
   deployIrrigateContract,
   transferERC20FromIrrigate,
   getERC20Balance
-}
+};
 
 /*
 web3.eth.sendTransaction({from: '0x123...', data: '0x432...'})
