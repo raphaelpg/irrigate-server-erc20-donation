@@ -4,7 +4,7 @@ import isEmail from 'validator/lib/isEmail';
 
 const getAssociations = async (req: Request, res: Response) => {
 	try {
-		let associations = await associationService.serviceGetAssociations();
+		let associations = await associationService.serviceGetAssociations({});
 		return res.status(200).json({ status: 200, data: associations, msg: "Associations retrieved successfully" });
 	} catch (e) {
 		return res.status(400).json({ status: 400, msg: e.message });

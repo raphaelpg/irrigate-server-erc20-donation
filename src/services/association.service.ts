@@ -4,16 +4,7 @@ import IAssociation from '../interfaces/association';
 
 const associationsCollection = config.mongo.associationsCollection;
 
-const serviceGetAssociations = async () => {
-  try {
-    const associations = await dbAccessFunctions.find(associationsCollection, {});
-    return associations;
-  } catch (e) {
-    throw Error("Error retrieving associations from database");
-  };
-};
-
-const serviceGetAssociationByFilter = async (filter: {}) => {
+const serviceGetAssociations = async (filter: {}) => {
   try {
     const associations = await dbAccessFunctions.find(associationsCollection, filter);
     return associations;
@@ -52,7 +43,6 @@ const serviceUpdateAssociation = async (filter: {}, query: {}) => {
 
 export default {
   serviceGetAssociations,
-  serviceGetAssociationByFilter,
   serviceAddAssociation,
   serviceDeleteAssociation,
   serviceUpdateAssociation

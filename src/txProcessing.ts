@@ -5,12 +5,11 @@ import transactionService from './services/transaction.services';
 import daiInterface from './contracts/Dai.json';
 import irrigateInterface from './contracts/Irrigate.json';
 import associationService from './services/association.service';
-import ITx from './interfaces/tx';
 
 const pendingTxChecker = async () => {
   console.log("PENDING TX CHECKER: Starting pending transactions checks...");
   const txs = await transactionService.serviceGetTx();
-  txs.forEach(async (tx: ITx) => {
+  for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
       const amountToTransfer = Math.floor(parseInt(tx.amount) - (parseInt(tx.amount) / config.params.fee));
       if (tx.currency === config.params.erc20Name) {
@@ -21,7 +20,7 @@ const pendingTxChecker = async () => {
         }
       }
     }
-  })
+  }
   console.log("PENDING TX CHECKER: Pending transactions checks ended");
   return;
 }
@@ -56,7 +55,7 @@ const ERC20INListener = async (web3: Web3) => {
   })
   .on('error', (error: any) => {
     console.log(error);
-  });
+  })
 }
 
 const ERC20OUTListener = async (web3: Web3) => {
@@ -66,6 +65,7 @@ const ERC20OUTListener = async (web3: Web3) => {
   await irrigateInstance.events.TokenTransfer({ fromBlock: "latest" })
   .on("connected", () => {
     console.log("ERC20 OUT LISTENER: Started");
+    pendingTxChecker();
   })
   .on('data', async (event: any) => {
     console.log("ERC20 OUT LISTENER:", event.returnValues.amount, "transferred to", event.returnValues.dest)
@@ -73,7 +73,7 @@ const ERC20OUTListener = async (web3: Web3) => {
     const txQuery = { "transferStatus": "transferred" };
     await transactionService.serviceUpdateTx(filter, txQuery)
     .then(async () => {
-      const targetAssociation = await associationService.serviceGetAssociationByFilter({ address: event.returnValues.dest });
+      const targetAssociation = await associationService.serviceGetAssociations({ address: event.returnValues.dest });
       const newAmount = parseInt(targetAssociation[0].totalDaiRaised) + parseInt(event.returnValues.amount);
       const associationQuery = { "totalDaiRaised": newAmount };
       await associationService.serviceUpdateAssociation({ address: event.returnValues.dest }, associationQuery);
@@ -98,7 +98,7 @@ const startTxProcessingEngine = async () => {
   .then(async () => {
     console.log('Connected to a node');
     ERC20OUTListener(web3);
-    await pendingTxChecker();
+  }).then(() => {
     ERC20INListener(web3);
   }).catch((e) => {
     console.log('Lost connection to the node, reconnecting');
