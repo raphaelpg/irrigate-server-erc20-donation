@@ -27,6 +27,7 @@ describe("test nominal transaction services", () => {
     await transactionService.serviceDeleteTx({ associationAddress: newAddress });
     const txs = await transactionService.serviceGetTx({});
     if (txs.length != 0) {
+      await transactionService.serviceDeleteTx({ associationAddress: txs[txs.length-1].associationAddress });
       expect(txs[txs.length-1].associationAddress).toEqual(expect.not.stringMatching(newAddress));
     } else {
       expect(txs.length).toEqual(0);

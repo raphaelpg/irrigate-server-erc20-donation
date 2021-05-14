@@ -12,6 +12,15 @@ const serviceContactMessage = async (query: IContactMessage) => {
 	};
 };
 
+const deleteContactMessage = async (query: {}) => {
+	try {
+		return await dbAccessFunctions.remove(contactMessagesCollection, { ...query });
+	} catch (e) {
+		throw Error("Error on inserting message");
+	};
+};
+
 export default {
-	serviceContactMessage
+	serviceContactMessage,
+	deleteContactMessage
 };

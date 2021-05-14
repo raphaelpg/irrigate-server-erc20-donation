@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 import mockMessagesTemplate from '../mocks/mockMessage';
+import messageService from '../services/contactMessage.service';
 
 describe("test messages routes", () => {
 
@@ -39,4 +40,9 @@ describe("test messages routes", () => {
       })
       .catch(err => done(err));
   });
+
+  test("should delete a message properly", async (done) => {
+    await messageService.deleteContactMessage({ name: mockMessagesTemplate.mockMessage.name });
+    done();
+  })
 });
