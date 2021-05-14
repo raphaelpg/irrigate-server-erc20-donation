@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import 'dotenv/config';
 import router from './routes/router';
 import rateLimiterDDos from './middlewares/ddosLimiter';
-import txProcessing from './txProcessing';
+// import txProcessing from './txProcessing';
 
 
 const app = express();
@@ -17,6 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(router);
 
-txProcessing.startTxProcessingEngine();
+// txProcessing.startTxProcessingEngine();
 
 export default app;

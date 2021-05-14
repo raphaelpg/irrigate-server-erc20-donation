@@ -12,6 +12,6 @@ export default interface IAssociation {
   logo?: string,
   contactName: string,
   contactEmail: string,
-  totalDaiRaised: number,
-  totalEthRaised: number
+  totalDaiRaised?: number,
+  totalEthRaised?: number
 };

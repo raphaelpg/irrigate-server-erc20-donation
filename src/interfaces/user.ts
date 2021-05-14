@@ -4,5 +4,5 @@ export default interface IUser {
   email: string,
   password: string,
   subscribedAssociations: string[],
-  role: string
+  role?: string
 };
