@@ -8,7 +8,7 @@ import associationService from './services/association.service';
 
 const pendingTxChecker = async () => {
   console.log("PENDING TX CHECKER: Starting pending transactions checks...");
-  const txs = await transactionService.serviceGetTx();
+  const txs = await transactionService.serviceGetTx({});
   for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
       const amountToTransfer = Math.floor(parseInt(tx.amount) - (parseInt(tx.amount) / config.params.fee));

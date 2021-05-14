@@ -3,7 +3,7 @@ import transactionService from '../services/transaction.services';
 
 const getTxs = async (req: Request, res: Response) => {
 	try {
-		let txs = await transactionService.serviceGetTx();
+		let txs = await transactionService.serviceGetTx({});
 		return res.status(200).json({ status: 200, data: txs, msg: "Txs retrieved successfully" });
 	} catch (e) {
 		return res.status(400).json({ status: 400, msg: e.message });

@@ -4,19 +4,14 @@ import ITx from '../interfaces/tx';
 
 const txCollection = config.mongo.txCollection;
 
-const serviceGetTx = async () => {
+const serviceGetTx = async (filter: {}) => {
   try {
-    const Txs = await dbAccessFunctions.find(txCollection, {});
+    const Txs = await dbAccessFunctions.find(txCollection, filter);
     return Txs;
   } catch (e) {
     throw Error("Error retrieving transactions from database");
   };
 };
-
-const findTxByAddressAndAmount: (filter : {}) => Promise<ITx[]> = async (filter) => {
-  const result = await dbAccessFunctions.find(txCollection, filter);
-  return result;
-}
 
 const serviceAddTx = async (query: ITx) => {
   try {
@@ -41,7 +36,7 @@ const serviceDeleteTx = async (name: string) => {
 };
 
 const serviceUpdateTx = async (filter: {}, query: {}) => {
-  const txs = await findTxByAddressAndAmount(filter);
+  const txs = await serviceGetTx(filter);
   if (txs.length === 0) {
     throw Error("Can't find transaction");
   };
