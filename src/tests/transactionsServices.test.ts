@@ -32,4 +32,8 @@ describe("test nominal transaction services", () => {
       expect(txs.length).toEqual(0);
     }
   });
+
+  test("should throw when trying to update a nonexistent tx", async () => {
+    await expect(() => transactionService.serviceUpdateTx({ donationId: "?" }, { associationAddress: "johndoe"})).rejects.toThrow("Can't find transaction");
+  });
 });

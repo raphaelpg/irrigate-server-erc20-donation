@@ -7,7 +7,7 @@ import mockTransactionTemplates from '../mocks/mockTransaction';
 import userService from '../services/user.service';
 import mockUserTemplates from '../mocks/mockUser';
 
-describe("test transactions services throwings when not connected to db", () => {
+describe("test services throwings when not connected to db", () => {
   test("should throw when trying to get associations", async () => {
     await expect(() => associationService.serviceGetAssociations({})).rejects.toThrow("Error retrieving associations from database");
   });
