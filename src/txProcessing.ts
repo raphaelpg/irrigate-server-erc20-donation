@@ -4,7 +4,7 @@ import web3Functions from './functions/web3Functions';
 import transactionService from './services/transaction.services';
 import daiInterface from './contracts/Dai.json';
 import irrigateInterface from './contracts/Irrigate.json';
-import associationService from './services/association.service';
+import associationService from './services/association.services';
 
 const pendingTxChecker = async () => {
   console.log("PENDING TX CHECKER: Starting pending transactions checks...");

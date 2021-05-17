@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import associationService from '../services/association.service';
+import associationService from '../services/association.services';
 import isEmail from 'validator/lib/isEmail';
 
 const getAssociations = async (req: Request, res: Response) => {
@@ -27,7 +27,7 @@ const addAssociation = async (req: Request, res: Response) => {
 const deleteAssociation = async (req: Request, res: Response) => {
 	let query = req.body;
 	try {
-		await associationService.serviceDeleteAssociation(query.name);
+		await associationService.serviceDeleteAssociation(query);
 		return res.status(200).json({ status: 200, msg: "Association deleted" });
 	} catch (e) {
 		return res.status(400).json({ status: 400, msg: e.message });

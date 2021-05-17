@@ -1,4 +1,5 @@
 import config from '../config/config';
+import mockAssociationTemplates from './mockAssociation';
 
 const mockTransactionTemplates = {
   mockTransaction: {
@@ -27,7 +28,7 @@ const mockTransactionTemplates = {
   
   mockTransactionForTxProcessingTest: {
     associationName: "Mock association", 
-    associationAddress: "0x22Bf65A7735E763777640C4Be9040f7E1A76eF96", 
+    associationAddress: mockAssociationTemplates.mockAssociation.address, 
     amount: "100", 
     donorAddress: config.web3.owner,
     currency: "dai"
@@ -35,7 +36,7 @@ const mockTransactionTemplates = {
   
   mockTransactionForTxProcessingTestNotListedAssociation: {
     associationName: "Not Listed", 
-    associationAddress: "0xc072de888b2785d9E56E0f89e7b53D811d65e39d", 
+    associationAddress: "0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf", 
     amount: "100", 
     donorAddress: config.web3.owner,
     currency: "dai"

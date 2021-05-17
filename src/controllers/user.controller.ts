@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import userService from '../services/user.service';
+import userService from '../services/user.services';
 import tokenFunctions from '../functions/tokenFunctions';
 import isEmail from 'validator/lib/isEmail';
 import isLength from 'validator/lib/isLength';

@@ -23,9 +23,9 @@ const serviceAddAssociation = async (query: IAssociation) => {
   };
 };
 
-const serviceDeleteAssociation = async (name: string) => {
+const serviceDeleteAssociation = async (filter: {}) => {
   try {
-    await dbAccessFunctions.remove(associationsCollection, { name });
+    await dbAccessFunctions.remove(associationsCollection, filter);
     return;
   } catch (e) {
     throw Error("Error while deleting association");

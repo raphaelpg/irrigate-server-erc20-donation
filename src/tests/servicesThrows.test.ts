@@ -1,10 +1,10 @@
-import associationService from '../services/association.service';
+import associationService from '../services/association.services';
 import mockAssociationTemplates from '../mocks/mockAssociation';
 import contactMessagesService from '../services/contactMessage.service';
 import mockMessageTemplates from '../mocks/mockMessage';
 import transactionService from '../services/transaction.services';
 import mockTransactionTemplates from '../mocks/mockTransaction';
-import userService from '../services/user.service';
+import userService from '../services/user.services';
 import mockUserTemplates from '../mocks/mockUser';
 
 describe("test services throwings when not connected to db", () => {
