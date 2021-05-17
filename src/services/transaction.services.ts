@@ -44,7 +44,7 @@ const serviceUpdateTx = async (filter: {}, query: {}) => {
     await dbAccessFunctions.update(txCollection, filter, query);
     return;
   } catch (e) {
-    throw Error("Error while updating association"); 
+    throw Error("Error while updating transaction"); 
   };
 };
 

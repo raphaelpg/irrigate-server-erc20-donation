@@ -27,7 +27,7 @@ const mockTransactionTemplates = {
   
   mockTransactionForTxProcessingTest: {
     associationName: "Red Cross", 
-    associationAddress: "0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf", 
+    associationAddress: "0x22Bf65A7735E763777640C4Be9040f7E1A76eF96", 
     amount: "100", 
     donorAddress: config.web3.owner,
     currency: "dai"

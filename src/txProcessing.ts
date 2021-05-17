@@ -16,7 +16,7 @@ const pendingTxChecker = async () => {
         const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance >= amountToTransfer) {
           console.log("Transfering:", amountToTransfer, config.params.erc20Name, "to", tx.associationAddress);
-          await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer.toString(), tx.donationId);
+          await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer, tx.donationId);
         }
       }
     }
@@ -39,22 +39,29 @@ const ERC20INListener = async (web3: Web3) => {
   })
   .on('data', async (event: any) => {
     console.log("ERC20 IN LISTENER: Received", event.returnValues.wad, config.params.erc20Name, "from", event.returnValues.src);
-    const filter = { donorAddress: event.returnValues.src, amount: event.returnValues.wad , currency: config.params.erc20Name, fundsStatus: "pending" };
-    const query = { "fundsStatus": "received" };
-    await transactionService.serviceUpdateTx(filter, query)
-    .then(async () => {
-      await pendingTxChecker();
-    })
-    .then(() => {
-      ERC20INListener(web3);
-    })
-    .catch(error => {
-      console.log(error);
-      ERC20INListener(web3);
-    })
+    const tx = await transactionService.serviceGetTx({ donorAddress: event.returnValues.src, currency: config.params.erc20Name, fundsStatus: "pending" });
+    if (typeof(tx[0]) != "undefined" && parseInt(tx[0].amount) <= parseInt(event.returnValues.wad)) {
+      // const filter = { donorAddress: event.returnValues.src, amount: tx[0].amount , currency: config.params.erc20Name, fundsStatus: "pending" };
+      const query = { "fundsStatus": "received" };
+      await transactionService.serviceUpdateTx(tx[0], query)
+      .then(async () => {
+        await pendingTxChecker();
+      })
+      // .then(() => {
+      //   ERC20INListener(web3);
+      // })
+      .catch(error => {
+        console.log(error);
+        // ERC20INListener(web3);
+      })
+    } else {
+      console.log("Funds received don't match the donation amount");
+      // ERC20INListener(web3);
+    }
   })
   .on('error', (error: any) => {
     console.log(error);
+    // ERC20INListener(web3);
   })
 }
 
@@ -78,17 +85,17 @@ const ERC20OUTListener = async (web3: Web3) => {
       const associationQuery = { "totalDaiRaised": newAmount };
       await associationService.serviceUpdateAssociation({ address: event.returnValues.dest }, associationQuery);
     })
-    .then(() => {
-      ERC20OUTListener(web3);
-    })
+    // .then(() => {
+    //   ERC20OUTListener(web3);
+    // })
     .catch(error => {
       console.log(error);
-      ERC20OUTListener(web3);
+      // ERC20OUTListener(web3);
     })
   })
   .on('error', (error: any) => {
     console.log(error);
-    startTxProcessingEngine();
+    // ERC20OUTListener(web3);
   });
 }
 

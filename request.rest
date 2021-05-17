@@ -12,7 +12,7 @@ Content-Type: application/json
   "category":"Health",
   "continent":"Worldwide",
   "country":"Worldwide",
-  "address":"0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf",
+  "address":"0x22Bf65A7735E763777640C4Be9040f7E1A76eF96",
   "logo":"",
   "contactName": "Mock contact",
   "contactEmail": "mockEmail@mock.com"
