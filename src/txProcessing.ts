@@ -59,7 +59,7 @@ const ERC20INListener = async (web3: Web3) => {
     }
   })
   .on('error', (error: any) => {
-    console.log(error);
+    console.log("listener in error:", error);
   })
 }
 
@@ -88,7 +88,8 @@ const ERC20OUTListener = async (web3: Web3) => {
     })
   })
   .on('error', (error: any) => {
-    console.log(error);
+    console.log("listener out error:", error);
+    startTxProcessingEngine();
   });
 }
 
