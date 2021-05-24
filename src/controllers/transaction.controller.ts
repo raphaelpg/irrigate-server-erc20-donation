@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import transactionService from '../services/transaction.services';
+// import web3 from 'web3';
 
 // const getTxs = async (req: Request, res: Response) => {
 // 	try {

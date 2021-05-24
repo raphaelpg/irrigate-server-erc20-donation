@@ -15,7 +15,7 @@ const serviceGetTx = async (filter: {}) => {
 
 const serviceAddTx = async (query: ITx) => {
   try {
-    query.donationId = Date.now().toString() + query.donorAddress + query.associationAddress;
+    query.donationId = Date.now().toString() + query.donorAddress.toLowerCase() + query.associationAddress.toLowerCase();
     query.fundsStatus = "pending";
     query.transferStatus = "pending";
     query.fee = (parseInt(query.amount) / config.params.fee).toString();

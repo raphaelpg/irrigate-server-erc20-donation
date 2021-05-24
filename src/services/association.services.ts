@@ -2,6 +2,7 @@ import dbAccessFunctions from '../functions/dbAccessFunctions';
 import config from '../config/config';
 import IAssociation from '../interfaces/association';
 
+
 const associationsCollection = config.mongo.associationsCollection;
 
 const serviceGetAssociations = async (filter: {}) => {
@@ -14,6 +15,7 @@ const serviceGetAssociations = async (filter: {}) => {
 };
 
 const serviceAddAssociation = async (query: IAssociation) => {
+  
   try {
     query = { ...query, totalDaiRaised: 0, totalEthRaised: 0 }
     await dbAccessFunctions.insert(associationsCollection, { ...query });

@@ -44,7 +44,7 @@ const transferERC20FromIrrigate = async (dst: string, amount: number, donationId
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   let result: boolean = false;
-  await irrigateInstance.methods.transferToken(dst, amount, donationId)
+  await irrigateInstance.methods.transferToken(dst, amount.toString(), donationId)
   .send({ from: config.web3.owner })
   .on('receipt', (receipt: any) => {
     result = true;
@@ -62,11 +62,25 @@ const getERC20Balance = async (address: string) => {
   return await erc20Instance.methods.balanceOf(address).call();
 };
 
+const hexToLowerCase = (item: any) => {
+  if (Object.keys(item).length != 0) {
+    Object.keys(item).map(key => {
+      if (["address", "associationAddress", "donorAddress"].includes(key)) {
+        item[key] = item[key].toLowerCase();
+      }
+    })
+    return item;
+  } else {
+    return item;
+  }
+}
+
 export default {
   deployERC20Contract,
   deployIrrigateContract,
   transferERC20FromIrrigate,
-  getERC20Balance
+  getERC20Balance,
+  hexToLowerCase
 };
 
 /*

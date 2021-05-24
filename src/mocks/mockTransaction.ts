@@ -36,7 +36,7 @@ const mockTransactionTemplates = {
   
   mockTransactionForTxProcessingTestNotListedAssociation: {
     associationName: "Not Listed", 
-    associationAddress: "0xc5B006b7F6b511A3f8faf17aA967d1B89EA364Bf", 
+    associationAddress: "0xB6372FE90d9d592C2c321352Fdd02FB25a14a45b", 
     amount: "100", 
     donorAddress: config.web3.owner,
     currency: "dai"

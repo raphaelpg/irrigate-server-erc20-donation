@@ -16,14 +16,14 @@ describe("test nominal transaction services", () => {
 
   test("should update a tx properly", async () => {
     const txs = await transactionService.serviceGetTx({});
-    const newAddress = "0xG";
+    const newAddress = "0xg";
     await transactionService.serviceUpdateTx({ donationId: txs[txs.length-1].donationId }, { associationAddress: newAddress });
     const newTxs = await transactionService.serviceGetTx({});
     expect(newTxs[txs.length-1].associationAddress).toMatch(newAddress);
   });
   
   test("should delete a tx properly", async () => {
-    const newAddress = "0xG";
+    const newAddress = "0xg";
     await transactionService.serviceDeleteTx({ associationAddress: newAddress });
     const txs = await transactionService.serviceGetTx({});
     if (txs.length != 0) {
