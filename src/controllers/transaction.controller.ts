@@ -21,15 +21,15 @@ const addTx = async (req: Request, res: Response) => {
 	};
 };
 
-// const deleteTx = async (req: Request, res: Response) => {
-// 	let query = req.body;
-// 	try {
-// 		await transactionService.serviceDeleteTx(query.name);
-// 		return res.status(200).json({ status: 200, msg: "Tx deleted" });
-// 	} catch (e) {
-// 		return res.status(400).json({ status: 400, msg: e.message });
-// 	};
-// };
+const deleteTx = async (req: Request, res: Response) => {
+	let query = req.body;
+	try {
+		await transactionService.serviceDeleteTx(query);
+		return res.status(200).json({ status: 200, msg: "Tx deleted" });
+	} catch (e) {
+		return res.status(400).json({ status: 400, msg: e.message });
+	};
+};
 
 // const updateTx = async (req: Request, res: Response) => {
 // 	let query = req.body;
@@ -44,6 +44,6 @@ const addTx = async (req: Request, res: Response) => {
 export default {
 	// getTxs,
 	addTx,
-	// deleteTx,
+	deleteTx,
 	// updateTx
 };

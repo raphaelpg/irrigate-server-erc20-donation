@@ -20,5 +20,6 @@ router.patch('/api/user/updateSubscriptions', rateLimiterSpam10, checkAuth, user
 router.delete('/api/user/delete', checkAuth, rateLimiterSpam10, checkRequestFields(""), userController.deleteUser);
 router.post('/api/message/add', rateLimiterSpam10, checkRequestFields(""), messageController.sendMessage);
 router.post('/api/donation/add', rateLimiterSpam10, checkRequestFields(""), transactionController.addTx);
+router.delete('/api/donation/delete', rateLimiterSpam10, checkRequestFields(""), transactionController.deleteTx);
 
 export = router;

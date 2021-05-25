@@ -38,4 +38,15 @@ describe("test transactions routes", () => {
       })
       .catch(err => done(err));
   });
+
+  test("DELETE api/donation/delete Should delete tx properly", (done) => {
+    request(app)
+      .delete("/api/donation/delete")
+      .send(mockTransactionTemplates.mockTransactionToDelete)
+      .expect(200)
+      .then(() => {
+        done();
+      })
+      .catch(err => done(err));
+  });
 });

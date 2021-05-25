@@ -354,7 +354,7 @@ describe("test user routes", () => {
       })
   });
 
-  test("POST /api/user/delete Remove user from database", (done) => {
+  test("DELETE /api/user/delete Remove user from database", (done) => {
     let token = '';
     request(app)
       .post("/api/user/login")
