@@ -82,7 +82,7 @@ const ERC20OUTListener = async (web3: Web3) => {
     .then(async () => {
       const targetAssociation = await associationService.serviceGetAssociations({ address: event.returnValues.dest });
       const newAmount = parseInt(targetAssociation[0].totalDaiRaised) + parseInt(event.returnValues.amount);
-      const associationQuery = { "totalDaiRaised": newAmount };
+      const associationQuery = { "totalDaiRaised": newAmount.toString() };
       await associationService.serviceUpdateAssociation({ address: event.returnValues.dest }, associationQuery);
     })
     .catch(error => {

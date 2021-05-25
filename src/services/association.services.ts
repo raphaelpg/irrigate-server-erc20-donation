@@ -17,7 +17,7 @@ const serviceGetAssociations = async (filter: {}) => {
 const serviceAddAssociation = async (query: IAssociation) => {
   
   try {
-    query = { ...query, totalDaiRaised: 0, totalEthRaised: 0 }
+    query = { ...query, totalDaiRaised: "0", totalEthRaised: "0" }
     await dbAccessFunctions.insert(associationsCollection, { ...query });
     return;
   } catch (e) {
