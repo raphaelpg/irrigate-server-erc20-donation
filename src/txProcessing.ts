@@ -1,5 +1,6 @@
 import config from './config/config';
 import Web3 from 'web3';
+// import { BN } = require'@openzeppelin/test-helpers';
 import web3Functions from './functions/web3Functions';
 import transactionService from './services/transaction.services';
 import daiInterface from './contracts/Dai.json';
@@ -11,12 +12,17 @@ const pendingTxChecker = async () => {
   const txs = await transactionService.serviceGetTx({});
   for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
-      const amountToTransfer = Math.floor(parseInt(tx.amount) - (parseInt(tx.amount) / config.params.fee));
+      // const amountToTransfer = Math.floor(parseInt(tx.amount) - (parseInt(tx.amount) / config.params.fee));
+      const amount = BigInt(tx.amount);
+      const fee = amount / BigInt(config.params.fee);
+      const amountToTransfer = (amount - fee);
+      // const amountToTransfer = Math.floor(parseInt(tx.amount) - (parseInt(tx.amount) / config.params.fee));
       if (tx.currency === config.params.erc20Name) {
         const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance >= amountToTransfer) {
           console.log("Transfering:", amountToTransfer, config.params.erc20Name, "to", tx.associationAddress);
-          await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer, tx.donationId);
+          const donationId = (tx.donationId).toString();
+          await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer, donationId);
         }
       }
     }
@@ -81,7 +87,7 @@ const ERC20OUTListener = async (web3: Web3) => {
     await transactionService.serviceUpdateTx(filter, txQuery)
     .then(async () => {
       const targetAssociation = await associationService.serviceGetAssociations({ address: event.returnValues.dest });
-      const newAmount = parseInt(targetAssociation[0].totalDaiRaised) + parseInt(event.returnValues.amount);
+      const newAmount = BigInt(targetAssociation[0].totalDaiRaised) + BigInt(event.returnValues.amount);
       const associationQuery = { "totalDaiRaised": newAmount.toString() };
       await associationService.serviceUpdateAssociation({ address: event.returnValues.dest }, associationQuery);
     })

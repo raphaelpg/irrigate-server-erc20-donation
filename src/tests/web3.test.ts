@@ -23,7 +23,7 @@ describe("test web3 functions", () => {
     const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
     await erc20Instance.methods.mint(config.web3.irrigate, 1000).send({ from: config.web3.owner });
     
-    const transferErc20 = await web3Functions.transferERC20FromIrrigate(config.web3.owner, 100, "donationId")
+    const transferErc20 = await web3Functions.transferERC20FromIrrigate(config.web3.owner, 100, 12345)
     expect(transferErc20).toEqual(true);
   });
 

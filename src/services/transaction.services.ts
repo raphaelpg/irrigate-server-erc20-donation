@@ -15,12 +15,12 @@ const serviceGetTx = async (filter: {}) => {
 
 const serviceAddTx = async (query: ITx) => {
   try {
-    query.donationId = Date.now().toString() + query.donorAddress.toLowerCase() + query.associationAddress.toLowerCase();
+    query.donationId = (BigInt(Date.now()) + BigInt(query.amount)).toString();
     query.fundsStatus = "pending";
     query.transferStatus = "pending";
     query.fee = (parseInt(query.amount) / config.params.fee).toString();
     await dbAccessFunctions.insert(txCollection, { ...query });
-    return;
+    return query.donationId;
   } catch (e) {
     throw Error("Error on inserting transaction to database");
   };

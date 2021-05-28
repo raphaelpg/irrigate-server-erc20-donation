@@ -14,8 +14,8 @@ import transactionService from '../services/transaction.services';
 const addTx = async (req: Request, res: Response) => {
 	let query = req.body;
 	try {
-		await transactionService.serviceAddTx(query);
-		return res.status(201).json({ status: 201, msg: "Tx added successfully" });
+		const donationId = await transactionService.serviceAddTx(query);
+		return res.status(201).json({ status: 201, msg: donationId });
 	} catch (e) {
 		return res.status(400).json({ status: 400, msg: e.message });
 	};

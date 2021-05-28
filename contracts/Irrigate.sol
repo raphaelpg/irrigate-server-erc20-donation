@@ -9,10 +9,10 @@ import "./Dai.sol";
 contract Irrigate is Ownable, ReentrancyGuard, Pausable {
   address public tokenAddress;
 
-  event ReceivedEther(address sender, uint amount);
-  event EtherSent(address dest, uint amount);
-  event TokenAddressChanged(address previousToken, address newToken);
-  event TokenTransfer(address dest, uint amount, string donationId);
+  event ReceivedEther(address indexed sender, uint indexed amount);
+  event EtherSent(address indexed dest, uint indexed amount);
+  event TokenAddressChanged(address indexed previousToken, address indexed newToken);
+  event TokenTransfer(address indexed dest, uint indexed amount, uint indexed donationId);
   
   constructor(address _tokenAddress) {
     tokenAddress = _tokenAddress;
@@ -46,7 +46,7 @@ contract Irrigate is Ownable, ReentrancyGuard, Pausable {
     emit TokenAddressChanged(previousTokenAddress, tokenAddress);
   }
 
-  function transferToken(address dest, uint amount, string memory donationId) public whenNotPaused onlyOwner nonReentrant {
+  function transferToken(address dest, uint amount, uint donationId) public whenNotPaused onlyOwner nonReentrant {
     Dai tokenContract = Dai(tokenAddress);
     require(tokenContract.balanceOf(address(this)) >= amount, "Insufficient balance");
     require(tokenContract.transferFrom(address(this), dest, amount) == true, "Could not send tokens to the buyer");

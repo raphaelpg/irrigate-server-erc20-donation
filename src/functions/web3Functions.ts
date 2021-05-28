@@ -40,7 +40,7 @@ const deployIrrigateContract = async (tokenAddress: string) => {
   return irrigate;
 };
 
-const transferERC20FromIrrigate = async (dst: string, amount: number, donationId: string) => {
+const transferERC20FromIrrigate = async (dst: string, amount: bigint, donationId: string) => {
   const irrigateAddress = config.web3.irrigate;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
   let result: boolean = false;
