@@ -49,7 +49,7 @@ contract Irrigate is Ownable, ReentrancyGuard, Pausable {
   function transferToken(address dest, uint amount, uint donationId) public whenNotPaused onlyOwner nonReentrant {
     Dai tokenContract = Dai(tokenAddress);
     require(tokenContract.balanceOf(address(this)) >= amount, "Insufficient balance");
-    require(tokenContract.transferFrom(address(this), dest, amount) == true, "Could not send tokens to the buyer");
+    require(tokenContract.transfer(dest, amount) == true, "Could not send tokens to the buyer");
     emit TokenTransfer(dest, amount, donationId);
   }
 }

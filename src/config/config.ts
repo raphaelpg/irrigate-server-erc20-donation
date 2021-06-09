@@ -20,11 +20,14 @@ const JWT = {
 }
 
 const WEB3 = {
+  mots: process.env.MOTS!,
   provider: "wss://ropsten.infura.io/ws/v3/" + process.env.INFURA_PROJECT_ID,
-  localProvider: "ws://localhost:7545",
-  owner: "0x4CF0b58898537D41Cb926a0d09727D5Ae6a3F93e",
-  erc20: "0x076A8cB9A2CFF702c4dCf21F495fB4AC8A0C1c04",
-  irrigate: "0x0cAFC7FE65c9fAbDd8383a521c4F157510e29239",
+  // localProvider: "ws://localhost:7545",
+  httpProvider: "https://matic-mumbai.chainstacklabs.com",
+  wsProvider: "wss://ws-matic-mumbai.chainstacklabs.com",
+  owner: "0xE1ed63922d65811Ac2633046763501f16759A085", // Account[0] matching .env mnemonic
+  erc20: "0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F", // Mumbai DAI ERC20 address
+  irrigate: "0x6E829b8628f618561720C405fcA2d4f3266Cdd67", // Mumbai Irrigate deployed address
 }
 
 const PARAMS = {
