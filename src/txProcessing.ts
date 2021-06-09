@@ -3,8 +3,6 @@ import Web3 from 'web3';
 import { BigNumber } from "bignumber.js";
 import web3Functions from './functions/web3Functions';
 import transactionService from './services/transaction.services';
-// import daiInterface from './contracts/Dai.json';
-// import irrigateInterface from './contracts/Irrigate.json';
 import associationService from './services/association.services';
 
 const pendingTxChecker = async () => {
@@ -12,27 +10,13 @@ const pendingTxChecker = async () => {
   const txs = await transactionService.serviceGetTx({});
   for (const tx of txs) {
     if (tx.fundsStatus === "received" && tx.transferStatus === "pending") {
-      console.log("1")
       const amount = new BigNumber(tx.amount);
-      console.log("amount", amount)
-      // const amount = BigInt(tx.amount);
       const fee = amount.dividedBy(new BigNumber(config.params.fee));
-      console.log("fee", fee)
-      // const fee = amount / new BigNumber(config.params.fee);
       const amountToTransfer = (amount.minus(fee));
-      console.log("amountToTransfer", amountToTransfer)
       if (tx.currency === config.params.erc20Name) {
-        console.log("2")
-        
         const irrigateBalance = new BigNumber(await web3Functions.getERC20Balance(config.web3.irrigate));
-        console.log("irrigateBalance", irrigateBalance)
-        console.log("irrigateBalance.minus(amountToTransfer) >= new BigNumber('0')", irrigateBalance.minus(amountToTransfer) >= new BigNumber("0"))
-        // const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance.minus(amountToTransfer) >= new BigNumber("0")) {
-        // if (irrigateBalance >= amountToTransfer) {
-          console.log("3")
-          
-          console.log("Transfering:", amountToTransfer.toString(), config.params.erc20Name, "to", tx.associationAddress);
+          console.log("Transfering:", amountToTransfer.toFixed(), config.params.erc20Name, "to", tx.associationAddress);
           const donationId = (tx.donationId).toString();
           await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer, donationId);
         }
@@ -50,36 +34,38 @@ const ERC20INListener = async (web3: Web3) => {
   const erc20Instance = new web3.eth.Contract(daiInterface.abi as any, erc20Address);
   
   await erc20Instance.events.Transfer({
-    filter: { dst: irrigateAddress },
+    // filter: { 1: irrigateAddress },
     fromBlock: "latest"
   })
   .on("connected", () => {
     console.log("ERC20 IN LISTENER: Started");
   })
   .on('data', async (event: any) => {
-    console.log(event)
     let eventSender = event.returnValues[0];
+    let eventReceiver = event.returnValues[1];
     let eventValue = event.returnValues[2];
-    console.log("ERC20 IN LISTENER: Received", eventValue, config.params.erc20Name, "from", eventSender);
-    const donorAddress = (eventSender).toLowerCase();
-    const currency = config.params.erc20Name;
-    const tx = await transactionService.serviceGetTx({ donorAddress: donorAddress, currency: currency, fundsStatus: "pending" })
-    if (typeof(tx[0]) != "undefined" && parseInt(tx[0].amount) <= parseInt(eventValue)) {
-      const associations = await associationService.serviceGetAssociations({ address: tx[0].associationAddress });
-      if (typeof(associations[0]) != "undefined") {
-        const query = { "fundsStatus": "received" };
-        await transactionService.serviceUpdateTx(tx[0], query)
-        .then(async () => {
-          await pendingTxChecker();
-        })
-        .catch(error => {
-          console.log(error);
-        })
+    if (eventReceiver == irrigateAddress) {
+      console.log("ERC20 IN LISTENER: Received", eventValue, config.params.erc20Name, "from", eventSender);
+      const donorAddress = (eventSender).toLowerCase();
+      const currency = config.params.erc20Name;
+      const tx = await transactionService.serviceGetTx({ donorAddress: donorAddress, currency: currency, fundsStatus: "pending" });
+      if (typeof(tx[0]) != "undefined" && parseInt(tx[0].amount) <= parseInt(eventValue)) {
+        const associations = await associationService.serviceGetAssociations({ address: tx[0].associationAddress });
+        if (typeof(associations[0]) != "undefined") {
+          const query = { "fundsStatus": "received" };
+          await transactionService.serviceUpdateTx(tx[0], query)
+          .then(async () => {
+            await pendingTxChecker();
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        } else {
+          console.log("Association address not found in the list");
+        }
       } else {
-        console.log("Association address not found in the list");
+        console.log("Not enough funds received");
       }
-    } else {
-      console.log("Not enough funds received");
     }
   })
   .on('error', (error: any) => {

@@ -58,10 +58,13 @@ const deployIrrigateContract = async (tokenAddress: string) => {
 const transferERC20FromIrrigate = async (dst: string, amount: BigNumber, donationId: string) => {
   const web3 = getHttpWeb3();
   const irrigateAddress = config.web3.irrigate;
+  const owner = config.web3.owner;
   const irrigateInstance = new web3.eth.Contract(irrigateInterface.abi as any, irrigateAddress);
+  let ownerNonce = await web3.eth.getTransactionCount(owner);
   let result: boolean = false;
-  await irrigateInstance.methods.transferToken(dst, amount.toString(), donationId)
-  .send({ from: config.web3.owner })
+
+  await irrigateInstance.methods.transferToken(dst, amount.toFixed(), donationId)
+  .send({ from: owner, nonce: ownerNonce })
   .on('receipt', (receipt: any) => {
     result = true;
   })
