@@ -26,13 +26,13 @@ const pendingTxChecker = async () => {
         
         const irrigateBalance = new BigNumber(await web3Functions.getERC20Balance(config.web3.irrigate));
         console.log("irrigateBalance", irrigateBalance)
-        console.log("irrigateBalance >= amountToTransfer", irrigateBalance >= amountToTransfer)
+        console.log("irrigateBalance.minus(amountToTransfer) >= new BigNumber('0')", irrigateBalance.minus(amountToTransfer) >= new BigNumber("0"))
         // const irrigateBalance = parseInt(await web3Functions.getERC20Balance(config.web3.irrigate));
         if (irrigateBalance.minus(amountToTransfer) >= new BigNumber("0")) {
         // if (irrigateBalance >= amountToTransfer) {
           console.log("3")
           
-          console.log("Transfering:", amountToTransfer, config.params.erc20Name, "to", tx.associationAddress);
+          console.log("Transfering:", amountToTransfer.toString(), config.params.erc20Name, "to", tx.associationAddress);
           const donationId = (tx.donationId).toString();
           await web3Functions.transferERC20FromIrrigate(tx.associationAddress, amountToTransfer, donationId);
         }

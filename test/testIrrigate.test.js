@@ -1,6 +1,6 @@
 const { expectRevert } = require("@openzeppelin/test-helpers");
 
-const Dai = artifacts.require("Dai");
+const Dai = artifacts.require("MintableERC20");
 const Irrigate = artifacts.require("Irrigate");
 
 contract("Irrigate", (accounts) => {
@@ -67,7 +67,8 @@ contract("Irrigate", (accounts) => {
 
   describe("can receive and transfer ERC20", async () => {
     it("can mint Dai", async () => {
-      await dai.mint(donor, 100, { from: originalOwner});
+      // await dai.mint(donor, 100, { from: originalOwner});
+      await dai.mint(100, { from: donor });
       
       const donorBalance = await dai.balanceOf(donor);
       assert.equal(donorBalance, 100, "The balance of the donor should be equal to 100 Dai");

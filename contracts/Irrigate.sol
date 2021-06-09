@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "./Ownable.sol";
 import "./ReentrancyGuard.sol";
 import "./Pausable.sol";
-import "./Dai.sol";
+import "./MintableERC20.sol";
 
 contract Irrigate is Ownable, ReentrancyGuard, Pausable {
   address public tokenAddress;
@@ -47,7 +47,7 @@ contract Irrigate is Ownable, ReentrancyGuard, Pausable {
   }
 
   function transferToken(address dest, uint amount, uint donationId) public whenNotPaused onlyOwner nonReentrant {
-    Dai tokenContract = Dai(tokenAddress);
+    MintableERC20 tokenContract = MintableERC20(tokenAddress);
     require(tokenContract.balanceOf(address(this)) >= amount, "Insufficient balance");
     require(tokenContract.transfer(dest, amount) == true, "Could not send tokens to the buyer");
     emit TokenTransfer(dest, amount, donationId);
