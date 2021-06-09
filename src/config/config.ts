@@ -27,7 +27,7 @@ const WEB3 = {
   wsProvider: "wss://ws-matic-mumbai.chainstacklabs.com",
   owner: "0xE1ed63922d65811Ac2633046763501f16759A085", // Account[0] matching .env mnemonic
   erc20: "0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F", // Mumbai DAI ERC20 address
-  irrigate: "0x6E829b8628f618561720C405fcA2d4f3266Cdd67", // Mumbai Irrigate deployed address
+  irrigate: "0xe5aab3581E702989d8D5de13fFe98E64417C56a0", // Mumbai Irrigate deployed address
 }
 
 const PARAMS = {
