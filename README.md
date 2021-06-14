@@ -49,7 +49,6 @@ You may increase the limits of the limiter middlewares in order to let the tests
 * [Express](https://expressjs.com/en/4x/api.html) - Fast, unopinionated, minimalist web framework for Node.js - v4.16.4  
 * [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) - MongoDB Atlas is the global cloud database service for modern applications.  
 * [TypeScript](https://www.typescriptlang.org/docs/handbook/intro.html) - By understanding JavaScript, TypeScript saves you time catching errors and providing fixes before you run code. - v4.2.3  
-* [Solidity](https://docs.soliditylang.org/en/develop/index.html) - Solidity is an object-oriented, high-level language for implementing smart contracts - v0.8.4  
 * [JWT](https://github.com/auth0/node-jsonwebtoken) - JSON Web Token (JWT) is a compact, URL-safe means of representing
    claims to be transferred between two parties. - v8.5.1  
 * [Bcrypt](https://www.npmjs.com/package/bcrypt) - A library to help you hash passwords. - v5.0.1  
@@ -57,6 +56,11 @@ You may increase the limits of the limiter middlewares in order to let the tests
 * [Supertest](https://github.com/visionmedia/supertest#readme) - Used to test the API routes. - v6.1.3  
 * [PM2](https://pm2.keymetrics.io/docs/usage/pm2-doc-single-page/) - Daemon process manager that will help you manage and keep your application online. - v4.5.5  
 * [Rate-limiter-flexible](https://github.com/animir/node-rate-limiter-flexible) - Counts and limits number of actions by key and protects from DDoS and brute force attacks at any scale. - v2.2.1  
+* [Solidity](https://docs.soliditylang.org/en/develop/index.html) - Solidity is an object-oriented, high-level language for implementing smart contracts - v0.8.4  
+* [web3.js](https://web3js.readthedocs.io/en/v1.3.4/) - web3.js is a collection of libraries that allow you to interact with a local or remote ethereum node using HTTP, IPC or WebSocket - v1.3.6
+* [Truffle](https://www.trufflesuite.com/docs/truffle/overview) - A world class development environment, testing framework and asset pipeline for blockchains using the Ethereum Virtual Machine (EVM) - v5.3.4  
+* [@openzeppelin/test-helpers](https://www.npmjs.com/package/@openzeppelin/test-helpers) - Assertion library for Ethereum smart contract testing - v0.5.11  
+* [bignumber.js](https://www.npmjs.com/package/bignumber.js) - A JavaScript library for arbitrary-precision decimal and non-decimal arithmetic - v9.0.1    
 
 
 ## Authors
