@@ -29,7 +29,7 @@ describe("test txProcessing functions", () => {
       .send(mockTransactionTemplates.mockTransactionForTxProcessingTest)
       .then(async () => {
         const donationAmount = parseInt(mockTransactionTemplates.mockTransactionForTxProcessingTest.amount);
-        const web3 = new Web3(config.web3.localProvider);
+        const web3 = new Web3("ws://localhost:7545");
         const erc20Address = config.web3.erc20;
         const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
         const associationInitialBalance = parseInt(await erc20Instance.methods.balanceOf(mockTransactionTemplates.mockTransactionForTxProcessingTest.associationAddress).call());
@@ -64,7 +64,7 @@ describe("test txProcessing functions", () => {
       .send(mockTransactionTemplates.mockTransactionForTxProcessingTest)
       .then(async () => {
         const donationAmount = parseInt(mockTransactionTemplates.mockTransactionForTxProcessingTest.amount) - 1;
-        const web3 = new Web3(config.web3.localProvider);
+        const web3 = new Web3("ws://localhost:7545");
         const erc20Address = config.web3.erc20;
         const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
         const associationInitialBalance = parseInt(await erc20Instance.methods.balanceOf(mockTransactionTemplates.mockTransactionForTxProcessingTest.associationAddress).call());
@@ -99,7 +99,7 @@ describe("test txProcessing functions", () => {
       .send(mockTransactionTemplates.mockTransactionForTxProcessingTest)
       .then(async () => {
         const donationAmount = parseInt(mockTransactionTemplates.mockTransactionForTxProcessingTest.amount);
-        const web3 = new Web3(config.web3.localProvider);
+        const web3 = new Web3("ws://localhost:7545");
         const erc20Address = config.web3.erc20;
         const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
         const associationInitialBalance = parseInt(await erc20Instance.methods.balanceOf(mockTransactionTemplates.mockTransactionForTxProcessingTest.associationAddress).call());
@@ -136,7 +136,7 @@ describe("test txProcessing functions", () => {
       .send(mockTransactionTemplates.mockTransactionForTxProcessingTestNotListedAssociation)
       .then(async () => {
         const donationAmount = parseInt(mockTransactionTemplates.mockTransactionForTxProcessingTestNotListedAssociation.amount);
-        const web3 = new Web3(config.web3.localProvider);
+        const web3 = new Web3("ws://localhost:7545");
         const erc20Address = config.web3.erc20;
         const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
         const associationInitialBalance = parseInt(await erc20Instance.methods.balanceOf(mockTransactionTemplates.mockTransactionForTxProcessingTestNotListedAssociation.associationAddress).call());
@@ -171,7 +171,7 @@ describe("test txProcessing functions", () => {
       .send(mockTransactionTemplates.mockTransactionForTxProcessingTest)
       .then(async () => {
         const donationAmount = parseInt(mockTransactionTemplates.mockTransactionForTxProcessingTest.amount);
-        const web3 = new Web3(config.web3.localProvider);
+        const web3 = new Web3("ws://localhost:7545");
         const erc20Address = config.web3.erc20;
         const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
         await erc20Instance.methods.mint(config.web3.owner, donationAmount).send({ from: config.web3.owner });
@@ -183,7 +183,7 @@ describe("test txProcessing functions", () => {
           .send(mockTransactionTemplates.mockTransactionForTxProcessingTest)
           .then(async () => {
             const donationAmount = parseInt(mockTransactionTemplates.mockTransactionForTxProcessingTest.amount);
-            const web3 = new Web3(config.web3.localProvider);
+            const web3 = new Web3("ws://localhost:7545");
             const erc20Address = config.web3.erc20;
             const erc20Instance = new web3.eth.Contract(erc20Interface.abi as any, erc20Address);
             const associationInitialBalance = parseInt(await erc20Instance.methods.balanceOf(mockTransactionTemplates.mockTransactionForTxProcessingTest.associationAddress).call());
