@@ -1,4 +1,4 @@
-# [Irrigate donation:](https://irrigateapp.xyz/)  
+# Irrigate donation: [=> visit](https://irrigateapp.xyz/)  
 
 Irrigate is a platform that aims to gather NGOs and associatons with donors from around the world.   
 NGOs and associations can apply to appear in the main page after going through a validation process.   
